@@ -1,0 +1,64 @@
+{
+  "locations": [
+    {
+      "id": "loc_1",
+      "token": "pool-north-u42",
+      "zoneName": "Pool North",
+      "spotLabel": "Umbrella 42",
+      "manualCodes": ["42", "U42"]
+    },
+    {
+      "id": "loc_2",
+      "token": "pool-east-c17",
+      "zoneName": "Pool East",
+      "spotLabel": "Cabana 17",
+      "manualCodes": ["17", "C17"]
+    }
+  ],
+  "menu": {
+    "categories": [
+      { "id": "cat_cocktails", "name": "Cocktails", "sortOrder": 1 },
+      { "id": "cat_snacks", "name": "Snacks", "sortOrder": 2 }
+    ],
+    "modifierGroups": [
+      { "id": "mg_ice", "name": "Ice Level", "minSelect": 1, "maxSelect": 1, "required": true }
+    ],
+    "modifierOptions": [
+      { "id": "opt_light_ice", "groupId": "mg_ice", "name": "Light ice", "priceDeltaCents": 0 },
+      { "id": "opt_regular_ice", "groupId": "mg_ice", "name": "Regular ice", "priceDeltaCents": 0 }
+    ],
+    "items": [
+      {
+        "id": "item_mojito",
+        "categoryId": "cat_cocktails",
+        "name": "Mojito",
+        "description": "Fresh mint, lime, soda",
+        "basePriceCents": 1400,
+        "available": true,
+        "modifierGroupIds": ["mg_ice"]
+      },
+      {
+        "id": "item_caipirinha",
+        "categoryId": "cat_cocktails",
+        "name": "Caipirinha",
+        "description": "Cachaca, lime, sugar",
+        "basePriceCents": 1450,
+        "available": true,
+        "modifierGroupIds": ["mg_ice"]
+      },
+      {
+        "id": "item_club_sandwich",
+        "categoryId": "cat_snacks",
+        "name": "Club Sandwich",
+        "description": "Chicken, bacon, lettuce",
+        "basePriceCents": 1800,
+        "available": true,
+        "modifierGroupIds": []
+      }
+    ]
+  },
+  "pricing": {
+    "taxRate": 0.08,
+    "serviceFeeRate": 0.1
+  }
+}

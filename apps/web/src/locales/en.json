@@ -1,0 +1,98 @@
+{
+  "ui.language_label": "Language",
+  "ui.language.en": "English",
+  "ui.language.pt-BR": "Portuguese (Brazil)",
+  "ui.language.fr": "French",
+  "ui.language.es": "Spanish",
+
+  "screen.start.title": "Start your order",
+  "screen.start.subtitle": "Scan the table QR with your phone camera app.",
+  "screen.start.qr_title": "QR first",
+  "screen.start.qr_body": "Scan the printed QR at your table. It opens your table page directly.",
+  "screen.start.manual_title": "Manual fallback",
+  "screen.start.manual_body": "If you opened this page manually, enter your table number.",
+  "screen.start.table_label": "Table number",
+  "screen.start.table_placeholder": "e.g. 42",
+  "screen.start.continue": "Continue",
+
+  "screen.location_missing.title": "Location not found",
+  "screen.location_missing.subtitle": "Please scan the table QR again.",
+  "screen.location_missing.error": "Invalid or inactive table link.",
+
+  "screen.location_confirm.title": "Confirm your location",
+  "screen.location_confirm.subtitle": "Double-check before ordering.",
+
+  "screen.menu.title": "Menu",
+
+  "screen.cart.title": "Your cart",
+  "screen.cart.subtitle": "Review before alerting waiter on WhatsApp.",
+  "screen.cart.empty": "Your cart is empty.",
+
+  "screen.sent.title": "Request ready",
+  "screen.sent.subtitle": "Finish sending in WhatsApp.",
+  "screen.sent.instructions": "WhatsApp opened with your order message. After sending it there, tap I sent it here.",
+  "screen.sent.reopened_warning": "This page was reopened. Notes/allergy text is not persisted for privacy.",
+  "screen.sent.empty_warning": "Cart is empty. Add items before sending another alert.",
+
+  "action.back_start": "Back to start",
+  "action.order_to_table": "Order to this table",
+  "action.use_another_table": "Use another table",
+  "action.view_cart": "View cart",
+  "action.add": "Add",
+  "action.add_to_cart": "Add to cart",
+  "action.cancel": "Cancel",
+  "action.remove": "Remove",
+  "action.send_whatsapp": "Send to waiter on WhatsApp",
+  "action.back_menu": "Back to menu",
+  "action.open_whatsapp_again": "Open WhatsApp again",
+  "action.i_sent_it": "I sent it",
+  "action.back_cart": "Back to cart",
+
+  "label.table": "Table",
+  "label.subtotal": "Subtotal",
+  "label.tax": "Tax",
+  "label.service_fee": "Service fee",
+  "label.total_estimate": "Total estimate",
+
+  "field.notes": "Notes",
+  "field.allergy_notes": "Allergy notes",
+  "field.message_preview": "Message preview",
+
+  "error.table_not_found": "Table number not found. Check and try again.",
+  "error.cart_empty": "Your cart is empty.",
+  "error.whatsapp_invalid": "Waiter WhatsApp number is missing or invalid.",
+  "error.item_unavailable": "Out of stock",
+
+  "aria.item_customization": "Item customization",
+  "aria.close": "Close",
+
+  "wa.header": "New Guest Order Request",
+  "wa.table_line": "Table: {value}",
+  "wa.zone_line": "Zone: {value}",
+  "wa.code_line": "Code: {value}",
+  "wa.time_line": "Time: {value}",
+  "wa.items_header": "Items:",
+  "wa.no_items": "- No items",
+  "wa.item_note_suffix": " | note: {value}",
+  "wa.subtotal_line": "Subtotal: {value}",
+  "wa.tax_line": "Tax: {value}",
+  "wa.service_fee_line": "Service fee: {value}",
+  "wa.total_line": "Total estimate: {value}",
+  "wa.order_notes_line": "Order notes: {value}",
+  "wa.allergy_notes_line": "Allergy notes: {value}",
+  "wa.confirm_line": "Please confirm this order at the table.",
+
+  "menu.categories.cat_cocktails.name": "Cocktails",
+  "menu.categories.cat_snacks.name": "Snacks",
+
+  "menu.items.item_mojito.name": "Mojito",
+  "menu.items.item_mojito.description": "Fresh mint, lime, soda",
+  "menu.items.item_caipirinha.name": "Caipirinha",
+  "menu.items.item_caipirinha.description": "Cachaca, lime, sugar",
+  "menu.items.item_club_sandwich.name": "Club Sandwich",
+  "menu.items.item_club_sandwich.description": "Chicken, bacon, lettuce",
+
+  "menu.modifierGroups.mg_ice.name": "Ice Level",
+  "menu.modifierOptions.opt_light_ice.name": "Light ice",
+  "menu.modifierOptions.opt_regular_ice.name": "Regular ice"
+}

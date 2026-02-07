@@ -1,0 +1,98 @@
+{
+  "ui.language_label": "Idioma",
+  "ui.language.en": "Inglés",
+  "ui.language.pt-BR": "Portugués (Brasil)",
+  "ui.language.fr": "Francés",
+  "ui.language.es": "Español",
+
+  "screen.start.title": "Comienza tu pedido",
+  "screen.start.subtitle": "Escanea el QR de la mesa con la cámara del celular.",
+  "screen.start.qr_title": "Primero QR",
+  "screen.start.qr_body": "Escanea el QR impreso en tu mesa. Abre directamente la página de tu mesa.",
+  "screen.start.manual_title": "Alternativa manual",
+  "screen.start.manual_body": "Si abriste esta página manualmente, ingresa el número de tu mesa.",
+  "screen.start.table_label": "Número de mesa",
+  "screen.start.table_placeholder": "ej.: 42",
+  "screen.start.continue": "Continuar",
+
+  "screen.location_missing.title": "Ubicación no encontrada",
+  "screen.location_missing.subtitle": "Vuelve a escanear el QR de la mesa.",
+  "screen.location_missing.error": "Enlace de mesa inválido o inactivo.",
+
+  "screen.location_confirm.title": "Confirma tu ubicación",
+  "screen.location_confirm.subtitle": "Verifica antes de pedir.",
+
+  "screen.menu.title": "Menú",
+
+  "screen.cart.title": "Tu carrito",
+  "screen.cart.subtitle": "Revisa antes de avisar al mesero por WhatsApp.",
+  "screen.cart.empty": "Tu carrito está vacío.",
+
+  "screen.sent.title": "Solicitud lista",
+  "screen.sent.subtitle": "Finaliza el envío en WhatsApp.",
+  "screen.sent.instructions": "WhatsApp se abrió con tu mensaje de pedido. Después de enviarlo allí, toca Aquí ya lo envié.",
+  "screen.sent.reopened_warning": "Esta página se volvió a abrir. El texto de notas/alergias no se guarda por privacidad.",
+  "screen.sent.empty_warning": "El carrito está vacío. Agrega productos antes de enviar otro aviso.",
+
+  "action.back_start": "Volver al inicio",
+  "action.order_to_table": "Pedir para esta mesa",
+  "action.use_another_table": "Usar otra mesa",
+  "action.view_cart": "Ver carrito",
+  "action.add": "Agregar",
+  "action.add_to_cart": "Agregar al carrito",
+  "action.cancel": "Cancelar",
+  "action.remove": "Quitar",
+  "action.send_whatsapp": "Enviar al mesero por WhatsApp",
+  "action.back_menu": "Volver al menú",
+  "action.open_whatsapp_again": "Abrir WhatsApp de nuevo",
+  "action.i_sent_it": "Aquí ya lo envié",
+  "action.back_cart": "Volver al carrito",
+
+  "label.table": "Mesa",
+  "label.subtotal": "Subtotal",
+  "label.tax": "Impuestos",
+  "label.service_fee": "Cargo por servicio",
+  "label.total_estimate": "Total estimado",
+
+  "field.notes": "Notas",
+  "field.allergy_notes": "Notas de alergias",
+  "field.message_preview": "Vista previa del mensaje",
+
+  "error.table_not_found": "Número de mesa no encontrado. Verifica e intenta de nuevo.",
+  "error.cart_empty": "Tu carrito está vacío.",
+  "error.whatsapp_invalid": "Número de WhatsApp del mesero faltante o inválido.",
+  "error.item_unavailable": "Agotado",
+
+  "aria.item_customization": "Personalización del producto",
+  "aria.close": "Cerrar",
+
+  "wa.header": "Nueva solicitud de pedido",
+  "wa.table_line": "Mesa: {value}",
+  "wa.zone_line": "Zona: {value}",
+  "wa.code_line": "Código: {value}",
+  "wa.time_line": "Hora: {value}",
+  "wa.items_header": "Productos:",
+  "wa.no_items": "- Sin productos",
+  "wa.item_note_suffix": " | nota: {value}",
+  "wa.subtotal_line": "Subtotal: {value}",
+  "wa.tax_line": "Impuestos: {value}",
+  "wa.service_fee_line": "Cargo por servicio: {value}",
+  "wa.total_line": "Total estimado: {value}",
+  "wa.order_notes_line": "Notas del pedido: {value}",
+  "wa.allergy_notes_line": "Notas de alergias: {value}",
+  "wa.confirm_line": "Por favor confirma este pedido en la mesa.",
+
+  "menu.categories.cat_cocktails.name": "Cócteles",
+  "menu.categories.cat_snacks.name": "Snacks",
+
+  "menu.items.item_mojito.name": "Mojito",
+  "menu.items.item_mojito.description": "Menta fresca, lima, soda",
+  "menu.items.item_caipirinha.name": "Caipiriña",
+  "menu.items.item_caipirinha.description": "Cachaça, lima, azúcar",
+  "menu.items.item_club_sandwich.name": "Sándwich club",
+  "menu.items.item_club_sandwich.description": "Pollo, tocino, lechuga",
+
+  "menu.modifierGroups.mg_ice.name": "Nivel de hielo",
+  "menu.modifierOptions.opt_light_ice.name": "Poco hielo",
+  "menu.modifierOptions.opt_regular_ice.name": "Hielo normal"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ez-order",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run -w @ez-order/web build",
+    "dev": "npm run -w @ez-order/web dev",
+    "dev:web": "npm run -w @ez-order/web dev",
+    "lint": "npm run -w @ez-order/web lint",
+    "preview": "npm run -w @ez-order/web preview"
+  }
+}
