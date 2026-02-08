@@ -660,7 +660,7 @@ h3 {
   color: var(--text-secondary);
 }
 
-input,
+input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]),
 textarea {
   min-height: 48px;
   border: 1px solid var(--border);
@@ -673,14 +673,14 @@ textarea {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-input:focus,
+input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):focus,
 textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(26, 92, 69, 0.08);
 }
 
-input::placeholder,
+input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"])::placeholder,
 textarea::placeholder {
   color: var(--text-tertiary);
 }
