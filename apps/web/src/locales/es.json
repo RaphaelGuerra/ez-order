@@ -23,6 +23,7 @@
   "screen.location_confirm.subtitle": "Verifica antes de pedir.",
 
   "screen.menu.title": "Menú",
+  "screen.menu.empty": "No hay productos disponibles en esta categoría por ahora.",
 
   "screen.cart.title": "Tu carrito",
   "screen.cart.subtitle": "Revisa antes de avisar al mesero por WhatsApp.",
@@ -62,6 +63,9 @@
   "error.cart_empty": "Tu carrito está vacío.",
   "error.whatsapp_invalid": "Número de WhatsApp del mesero faltante o inválido.",
   "error.item_unavailable": "Agotado",
+  "error.modifier_required": "Selecciona al menos {count} opción(es) para {group}.",
+  "error.modifier_limit": "Selecciona hasta {count} opción(es) para {group}.",
+  "error.modifier_unavailable": "Este producto está temporalmente no disponible. Faltan opciones obligatorias para {group}.",
 
   "aria.item_customization": "Personalización del producto",
   "aria.close": "Cerrar",

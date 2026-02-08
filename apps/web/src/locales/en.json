@@ -23,6 +23,7 @@
   "screen.location_confirm.subtitle": "Double-check before ordering.",
 
   "screen.menu.title": "Menu",
+  "screen.menu.empty": "No items available in this category right now.",
 
   "screen.cart.title": "Your cart",
   "screen.cart.subtitle": "Review before alerting waiter on WhatsApp.",
@@ -62,6 +63,9 @@
   "error.cart_empty": "Your cart is empty.",
   "error.whatsapp_invalid": "Waiter WhatsApp number is missing or invalid.",
   "error.item_unavailable": "Out of stock",
+  "error.modifier_required": "Select at least {count} option(s) for {group}.",
+  "error.modifier_limit": "Select up to {count} option(s) for {group}.",
+  "error.modifier_unavailable": "This item is temporarily unavailable. Required options for {group} are missing.",
 
   "aria.item_customization": "Item customization",
   "aria.close": "Close",

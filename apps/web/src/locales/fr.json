@@ -23,6 +23,7 @@
   "screen.location_confirm.subtitle": "Vérifiez avant de commander.",
 
   "screen.menu.title": "Menu",
+  "screen.menu.empty": "Aucun article n'est disponible dans cette catégorie pour le moment.",
 
   "screen.cart.title": "Votre panier",
   "screen.cart.subtitle": "Vérifiez avant d'alerter le serveur sur WhatsApp.",
@@ -62,6 +63,9 @@
   "error.cart_empty": "Votre panier est vide.",
   "error.whatsapp_invalid": "Numéro WhatsApp du serveur manquant ou invalide.",
   "error.item_unavailable": "Rupture",
+  "error.modifier_required": "Sélectionnez au moins {count} option(s) pour {group}.",
+  "error.modifier_limit": "Sélectionnez jusqu'à {count} option(s) pour {group}.",
+  "error.modifier_unavailable": "Cet article est temporairement indisponible. Les options requises pour {group} sont manquantes.",
 
   "aria.item_customization": "Personnalisation de l'article",
   "aria.close": "Fermer",

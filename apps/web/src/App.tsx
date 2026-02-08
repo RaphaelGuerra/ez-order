@@ -54,7 +54,8 @@ type CartLine = {
 
 type ConfigState = {
   item: MenuItem;
-  selectedOptionByGroup: Record<string, string>;
+  selectedOptionsByGroup: Record<string, string[]>;
+  validationError: string | null;
 };
 
 type SentPageState = {
@@ -291,6 +292,20 @@ function getLineModifierLabel(line: CartLine, t: TranslateFn): string {
   return translated || line.modifierLabel;
 }
 
+function getOptionsForGroup(groupId: string): ModifierOption[] {
+  return MODIFIER_OPTIONS.filter((option) => option.groupId === groupId);
+}
+
+function getSelectionBounds(group: ModifierGroup): { min: number; max: number } {
+  const min = Math.max(0, group.minSelect);
+  const max = Math.max(min, group.maxSelect);
+  return { min, max };
+}
+
+function flattenSelectedOptionsByGroup(selectedOptionsByGroup: Record<string, string[]>): string[] {
+  return Object.values(selectedOptionsByGroup).flat();
+}
+
 function buildWhatsAppMessage(input: {
   t: TranslateFn;
   formatMoney: (cents: number) => string;
@@ -390,6 +405,12 @@ function App() {
 
   useEffect(() => {
     localSet(LOCALE_STORAGE_KEY, locale);
+  }, [locale]);
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = locale;
+    }
   }, [locale]);
 
   const t = useMemo(() => createTranslator(locale), [locale]);
@@ -591,14 +612,62 @@ function GuestMenuPage() {
   const items = MENU_ITEMS.filter((item) => item.categoryId === activeCategoryId);
 
   const openConfigurator = (item: MenuItem) => {
-    const defaults: Record<string, string> = {};
+    const defaults: Record<string, string[]> = {};
     for (const groupId of item.modifierGroupIds) {
-      const option = MODIFIER_OPTIONS.find((candidate) => candidate.groupId === groupId);
-      if (option) {
-        defaults[groupId] = option.id;
+      const group = MODIFIER_GROUP_BY_ID.get(groupId);
+      if (!group) {
+        defaults[groupId] = [];
+        continue;
+      }
+
+      const options = getOptionsForGroup(groupId);
+      const { min } = getSelectionBounds(group);
+      defaults[groupId] = options.slice(0, Math.min(min, options.length)).map((option) => option.id);
+    }
+
+    setConfig({ item, selectedOptionsByGroup: defaults, validationError: null });
+  };
+
+  const validateConfigSelection = (
+    item: MenuItem,
+    selectedOptionsByGroup: Record<string, string[]>,
+  ): string | null => {
+    for (const groupId of item.modifierGroupIds) {
+      const group = MODIFIER_GROUP_BY_ID.get(groupId);
+      if (!group) {
+        continue;
+      }
+
+      const options = getOptionsForGroup(groupId);
+      const optionIds = new Set(options.map((option) => option.id));
+      const selectedOptionIds = (selectedOptionsByGroup[groupId] ?? []).filter((id) => optionIds.has(id));
+      const { min, max } = getSelectionBounds(group);
+      const groupName = getModifierGroupName(group, t);
+
+      if (options.length < min) {
+        return t(
+          "error.modifier_unavailable",
+          "This item is temporarily unavailable. Required options for {group} are missing.",
+          { group: groupName },
+        );
+      }
+
+      if (selectedOptionIds.length < min) {
+        return t("error.modifier_required", "Select at least {count} option(s) for {group}.", {
+          count: min,
+          group: groupName,
+        });
+      }
+
+      if (selectedOptionIds.length > max) {
+        return t("error.modifier_limit", "Select up to {count} option(s) for {group}.", {
+          count: max,
+          group: groupName,
+        });
       }
     }
-    setConfig({ item, selectedOptionByGroup: defaults });
+
+    return null;
   };
 
   const addToCart = (item: MenuItem, optionIds: string[]) => {
@@ -606,13 +675,15 @@ function GuestMenuPage() {
       return;
     }
 
+    const normalizedOptionIds = Array.from(new Set(optionIds));
+
     const modifierDelta = MODIFIER_OPTIONS
-      .filter((option) => optionIds.includes(option.id))
+      .filter((option) => normalizedOptionIds.includes(option.id))
       .reduce((sum, option) => sum + option.priceDeltaCents, 0);
 
     const unitPrice = item.basePriceCents + modifierDelta;
     const existing = localGet<CartLine[]>(cartKey(locationToken)) ?? [];
-    const signature = [item.id, ...optionIds.slice().sort()].join("|");
+    const signature = [item.id, ...normalizedOptionIds.slice().sort()].join("|");
 
     const existingLine = existing.find(
       (line) => [line.menuItemId, ...line.modifierOptionIds.slice().sort()].join("|") === signature,
@@ -622,7 +693,7 @@ function GuestMenuPage() {
       existingLine.quantity += 1;
       existingLine.lineTotalCents = existingLine.quantity * existingLine.unitPriceCents;
       existingLine.itemNameSnapshot = getMenuItemName(item, t);
-      existingLine.modifierLabel = buildModifierLabel(optionIds, t);
+      existingLine.modifierLabel = buildModifierLabel(normalizedOptionIds, t);
     } else {
       existing.push({
         id: crypto.randomUUID(),
@@ -631,8 +702,8 @@ function GuestMenuPage() {
         quantity: 1,
         unitPriceCents: unitPrice,
         lineTotalCents: unitPrice,
-        modifierOptionIds: optionIds,
-        modifierLabel: buildModifierLabel(optionIds, t),
+        modifierOptionIds: normalizedOptionIds,
+        modifierLabel: buildModifierLabel(normalizedOptionIds, t),
       });
     }
 
@@ -656,27 +727,35 @@ function GuestMenuPage() {
       </section>
 
       <section className="menu-grid">
-        {items.map((item) => (
-          <article key={item.id} className={`panel${!item.available ? " item-unavailable" : ""}`}>
-            <h3>{getMenuItemName(item, t)}</h3>
-            <p className="subtle">{getMenuItemDescription(item, t)}</p>
-            <p className="price">{formatMoney(item.basePriceCents)}</p>
-            {!item.available ? <p className="warning">{t("error.item_unavailable", "Out of stock")}</p> : null}
-            <button
-              className="button"
-              disabled={!item.available}
-              onClick={() => {
-                if (item.modifierGroupIds.length === 0) {
-                  addToCart(item, []);
-                  return;
-                }
-                openConfigurator(item);
-              }}
-            >
-              {t("action.add", "Add")}
-            </button>
+        {items.length === 0 ? (
+          <article className="panel">
+            <p className="subtle">
+              {t("screen.menu.empty", "No items available in this category right now.")}
+            </p>
           </article>
-        ))}
+        ) : (
+          items.map((item) => (
+            <article key={item.id} className={`panel${!item.available ? " item-unavailable" : ""}`}>
+              <h3>{getMenuItemName(item, t)}</h3>
+              <p className="subtle">{getMenuItemDescription(item, t)}</p>
+              <p className="price">{formatMoney(item.basePriceCents)}</p>
+              {!item.available ? <p className="warning">{t("error.item_unavailable", "Out of stock")}</p> : null}
+              <button
+                className="button"
+                disabled={!item.available}
+                onClick={() => {
+                  if (item.modifierGroupIds.length === 0) {
+                    addToCart(item, []);
+                    return;
+                  }
+                  openConfigurator(item);
+                }}
+              >
+                {t("action.add", "Add")}
+              </button>
+            </article>
+          ))
+        )}
       </section>
 
       <footer className="sticky-footer">
@@ -708,7 +787,10 @@ function GuestMenuPage() {
               if (!group) {
                 return null;
               }
-              const options = MODIFIER_OPTIONS.filter((option) => option.groupId === groupId);
+              const options = getOptionsForGroup(groupId);
+              const selectedOptionIds = config.selectedOptionsByGroup[group.id] ?? [];
+              const { min, max } = getSelectionBounds(group);
+              const useRadio = min === 1 && max === 1;
 
               return (
                 <fieldset key={group.id} className="fieldset">
@@ -716,24 +798,55 @@ function GuestMenuPage() {
                   {options.map((option) => {
                     const delta = option.priceDeltaCents;
                     const deltaLabel = delta === 0 ? "" : ` (${delta > 0 ? "+" : ""}${formatMoney(delta)})`;
+                    const isSelected = selectedOptionIds.includes(option.id);
+                    const disableBecauseMaxReached =
+                      !useRadio && max > 1 && selectedOptionIds.length >= max && !isSelected;
 
                     return (
                       <label key={option.id} className="option-row">
                         <input
-                          type="radio"
-                          name={group.id}
-                          checked={config.selectedOptionByGroup[group.id] === option.id}
+                          type={useRadio ? "radio" : "checkbox"}
+                          name={useRadio ? group.id : undefined}
+                          checked={isSelected}
+                          disabled={disableBecauseMaxReached}
                           onChange={() => {
                             setConfig((current) =>
-                              current
-                                ? {
+                              (() => {
+                                if (!current) {
+                                  return current;
+                                }
+
+                                const currentSelected = current.selectedOptionsByGroup[group.id] ?? [];
+                                let nextSelected: string[];
+
+                                if (useRadio) {
+                                  nextSelected = [option.id];
+                                } else if (currentSelected.includes(option.id)) {
+                                  nextSelected = currentSelected.filter((id) => id !== option.id);
+                                } else if (max === 1) {
+                                  nextSelected = [option.id];
+                                } else if (currentSelected.length < max) {
+                                  nextSelected = [...currentSelected, option.id];
+                                } else {
+                                  return {
                                     ...current,
-                                    selectedOptionByGroup: {
-                                      ...current.selectedOptionByGroup,
-                                      [group.id]: option.id,
-                                    },
-                                  }
-                                : current,
+                                    validationError: t(
+                                      "error.modifier_limit",
+                                      "Select up to {count} option(s) for {group}.",
+                                      { count: max, group: getModifierGroupName(group, t) },
+                                    ),
+                                  };
+                                }
+
+                                return {
+                                  ...current,
+                                  validationError: null,
+                                  selectedOptionsByGroup: {
+                                    ...current.selectedOptionsByGroup,
+                                    [group.id]: nextSelected,
+                                  },
+                                };
+                              })(),
                             );
                           }}
                         />
@@ -744,11 +857,20 @@ function GuestMenuPage() {
                 </fieldset>
               );
             })}
+            {config.validationError ? <p className="error">{config.validationError}</p> : null}
 
             <div className="button-row">
               <button
                 className="button"
-                onClick={() => addToCart(config.item, Object.values(config.selectedOptionByGroup))}
+                onClick={() => {
+                  const validationError = validateConfigSelection(config.item, config.selectedOptionsByGroup);
+                  if (validationError) {
+                    setConfig((current) => (current ? { ...current, validationError } : current));
+                    return;
+                  }
+
+                  addToCart(config.item, flattenSelectedOptionsByGroup(config.selectedOptionsByGroup));
+                }}
               >
                 {t("action.add_to_cart", "Add to cart")}
               </button>

@@ -23,6 +23,7 @@
   "screen.location_confirm.subtitle": "Confira antes de pedir.",
 
   "screen.menu.title": "Cardápio",
+  "screen.menu.empty": "Nenhum item disponível nesta categoria no momento.",
 
   "screen.cart.title": "Seu carrinho",
   "screen.cart.subtitle": "Revise antes de avisar o garçom no WhatsApp.",
@@ -62,6 +63,9 @@
   "error.cart_empty": "Seu carrinho está vazio.",
   "error.whatsapp_invalid": "Número de WhatsApp do garçom ausente ou inválido.",
   "error.item_unavailable": "Indisponível",
+  "error.modifier_required": "Selecione pelo menos {count} opção(ões) para {group}.",
+  "error.modifier_limit": "Selecione até {count} opção(ões) para {group}.",
+  "error.modifier_unavailable": "Este item está temporariamente indisponível. Opções obrigatórias de {group} estão ausentes.",
 
   "aria.item_customization": "Personalização do item",
   "aria.close": "Fechar",
