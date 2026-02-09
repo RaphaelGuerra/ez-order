@@ -123,6 +123,7 @@ const MODIFIER_OPTION_BY_ID = new Map(MODIFIER_OPTIONS.map((option) => [option.i
 const CART_PREFIX = "ez-order:cart:";
 const I18nContext = createContext<I18nContextValue | null>(null);
 const MAX_FREE_TEXT_LENGTH = 280;
+const NOTIFY_REQUEST_TIMEOUT_MS = 12_000;
 
 function cartKey(locationToken: string): string {
   return `${CART_PREFIX}${locationToken}`;
@@ -277,6 +278,14 @@ function getLineModifierLabel(line: CartLine, t: TranslateFn): string {
   return translated || line.modifierLabel;
 }
 
+function getLocationZoneName(location: Location, t: TranslateFn): string {
+  return t(`location.${location.id}.zone`, location.zoneName);
+}
+
+function getLocationSpotLabel(location: Location, t: TranslateFn): string {
+  return t(`location.${location.id}.spot`, location.spotLabel);
+}
+
 function getOptionsForGroup(groupId: string): ModifierOption[] {
   return MODIFIER_OPTIONS.filter((option) => option.groupId === groupId);
 }
@@ -301,6 +310,8 @@ function buildOrderMessage(input: {
   allergyNotes: string;
   totals: { subtotalCents: number; taxCents: number; serviceFeeCents: number; totalCents: number };
 }): string {
+  const locationZone = getLocationZoneName(input.location, input.t);
+  const locationSpot = getLocationSpotLabel(input.location, input.t);
   const lineRows = input.lines
     .map((line) => {
       const itemName = getLineItemName(line, input.t);
@@ -315,8 +326,8 @@ function buildOrderMessage(input: {
 
   const parts: string[] = [
     input.t("order.header", "New Guest Order Request"),
-    input.t("order.table_line", "Table: {value}", { value: input.location.spotLabel }),
-    input.t("order.zone_line", "Zone: {value}", { value: input.location.zoneName }),
+    input.t("order.table_line", "Table: {value}", { value: locationSpot }),
+    input.t("order.zone_line", "Zone: {value}", { value: locationZone }),
     input.t("order.code_line", "Code: {value}", {
       value: input.location.manualCodes[0] ?? input.location.token,
     }),
@@ -449,6 +460,54 @@ function LeafIcon(props: { size?: number; className?: string }) {
         strokeLinecap="round"
       />
     </svg>
+  );
+}
+
+function MenuItemImage(props: {
+  src?: string;
+  alt: string;
+  containerClassName: "menu-item-thumb" | "menu-item-hero";
+  fallbackText: string;
+}) {
+  const [failedSources, setFailedSources] = useState<Record<string, true>>({});
+  const source = props.src;
+  const imageUnavailable = source ? Boolean(failedSources[source]) : true;
+
+  if (imageUnavailable) {
+    return (
+      <div className={`${props.containerClassName} menu-item-image-fallback`} role="img" aria-label={props.alt}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="menu-item-image-fallback-icon">
+          <path
+            d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Zm3.2 10.6h9.6L14 13.7a1 1 0 0 0-1.5-.1l-1.5 1.6-1.1-.9a1 1 0 0 0-1.4.1l-1.3 1.7Z"
+            fill="currentColor"
+            fillOpacity="0.42"
+          />
+          <circle cx="9.2" cy="9" r="1.7" fill="currentColor" fillOpacity="0.58" />
+        </svg>
+        <span>{props.fallbackText}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className={props.containerClassName}>
+      <img
+        src={source}
+        alt={props.alt}
+        loading="lazy"
+        onError={() => {
+          if (!source) {
+            return;
+          }
+          setFailedSources((current) => {
+            if (current[source]) {
+              return current;
+            }
+            return { ...current, [source]: true };
+          });
+        }}
+      />
+    </div>
   );
 }
 
@@ -591,6 +650,9 @@ function GuestLocationPage() {
     );
   }
 
+  const locationZone = getLocationZoneName(location, t);
+  const locationSpot = getLocationSpotLabel(location, t);
+
   return (
     <Screen
       title={t("screen.location_confirm.title", "Confirm your location")}
@@ -598,9 +660,9 @@ function GuestLocationPage() {
     >
       <section className="panel">
         <p className="location">
-          <strong>{location.zoneName}</strong>
+          <strong>{locationZone}</strong>
           <br />
-          {location.spotLabel}
+          {locationSpot}
         </p>
         <div className="button-row">
           <button className="button" onClick={() => navigate(`/g/${location.token}/menu`)}>
@@ -630,10 +692,16 @@ function GuestMenuPage() {
   const [toastText, setToastText] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
+  useEffect(() => {
+    return () => clearTimeout(toastTimerRef.current);
+  }, []);
+
   if (!location) {
     return <Navigate to="/" replace />;
   }
 
+  const locationZone = getLocationZoneName(location, t);
+  const locationSpot = getLocationSpotLabel(location, t);
   const categories = MENU_CATEGORIES;
   const items = MENU_ITEMS.filter((item) => item.categoryId === activeCategoryId);
 
@@ -744,7 +812,7 @@ function GuestMenuPage() {
   };
 
   return (
-    <Screen title={t("screen.menu.title", "Menu")} subtitle={`${location.zoneName} · ${location.spotLabel}`}>
+    <Screen title={t("screen.menu.title", "Menu")} subtitle={`${locationZone} · ${locationSpot}`}>
       <section className="category-tabs">
         {categories.map((category) => (
           <button
@@ -767,18 +835,12 @@ function GuestMenuPage() {
         ) : (
           items.map((item) => (
             <article key={item.id} className={`panel${!item.available ? " item-unavailable" : ""}`}>
-              {item.imageUrl ? (
-                <div className="menu-item-thumb">
-                  <img
-                    src={item.imageUrl}
-                    alt=""
-                    loading="lazy"
-                    onError={(e) => {
-                      (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-                    }}
-                  />
-                </div>
-              ) : null}
+              <MenuItemImage
+                src={item.imageUrl}
+                alt={getMenuItemName(item, t)}
+                containerClassName="menu-item-thumb"
+                fallbackText={t("media.image_unavailable", "Image unavailable")}
+              />
               <h3>{getMenuItemName(item, t)}</h3>
               <p className="subtle">{getMenuItemDescription(item, t)}</p>
               <p className="price">{formatMoney(item.basePriceCents)}</p>
@@ -825,18 +887,12 @@ function GuestMenuPage() {
             >
               ×
             </button>
-            {config.item.imageUrl ? (
-              <div className="menu-item-hero">
-                <img
-                  src={config.item.imageUrl}
-                  alt=""
-                  loading="lazy"
-                  onError={(e) => {
-                    (e.currentTarget.parentElement as HTMLElement).style.display = "none";
-                  }}
-                />
-              </div>
-            ) : null}
+            <MenuItemImage
+              src={config.item.imageUrl}
+              alt={getMenuItemName(config.item, t)}
+              containerClassName="menu-item-hero"
+              fallbackText={t("media.image_unavailable", "Image unavailable")}
+            />
             <h3>{getMenuItemName(config.item, t)}</h3>
             {config.item.modifierGroupIds.map((groupId) => {
               const group = MODIFIER_GROUP_BY_ID.get(groupId);
@@ -956,11 +1012,13 @@ function GuestCartPage() {
   const [allergyNotes, setAllergyNotes] = useState("");
   const [errorKey, setErrorKey] = useState<"cart_empty" | "send_failed" | null>(null);
   const [sending, setSending] = useState(false);
+  const sendingRef = useRef(false);
 
   if (!location) {
     return <Navigate to="/" replace />;
   }
 
+  const locationSpot = getLocationSpotLabel(location, t);
   const totals = calculateTotals(lines);
 
   const removeLine = (id: string) => {
@@ -970,6 +1028,10 @@ function GuestCartPage() {
   };
 
   const sendOrder = async () => {
+    if (sendingRef.current) {
+      return;
+    }
+
     setErrorKey(null);
 
     if (lines.length === 0) {
@@ -988,14 +1050,19 @@ function GuestCartPage() {
       totals,
     });
 
-    const title = t("order.push_title", "New order: {spot}", { spot: location.spotLabel });
+    const title = t("order.push_title", "New order: {spot}", { spot: locationSpot });
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), NOTIFY_REQUEST_TIMEOUT_MS);
+
+    sendingRef.current = true;
     setSending(true);
     try {
       const res = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, message }),
+        signal: controller.signal,
       });
 
       if (!res.ok) {
@@ -1012,6 +1079,8 @@ function GuestCartPage() {
     } catch {
       setErrorKey("send_failed");
     } finally {
+      clearTimeout(timeout);
+      sendingRef.current = false;
       setSending(false);
     }
   };
@@ -1120,6 +1189,7 @@ function GuestSentPage() {
     return <Navigate to="/" replace />;
   }
 
+  const locationSpot = getLocationSpotLabel(location, t);
   const sentAt = sentState?.sentAtIso ? new Date(sentState.sentAtIso) : null;
 
   return (
@@ -1136,7 +1206,7 @@ function GuestSentPage() {
           </svg>
         </div>
         <p className="sent-table">
-          {t("label.table", "Table")}: <strong>{location.spotLabel}</strong>
+          {t("label.table", "Table")}: <strong>{locationSpot}</strong>
         </p>
         {sentAt ? (
           <p className="subtle">

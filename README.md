@@ -56,11 +56,27 @@ npm run build
 ## Seeded Table Setup
 ### QR Tokens
 - `pool-north-u42`
+- `pool-north-u43`
+- `pool-north-u44`
 - `pool-east-c17`
+- `pool-east-c18`
+- `pool-east-c19`
+- `pool-south-u25`
+- `pool-south-u26`
+- `pool-west-l31`
+- `pool-west-l32`
+- `infinity-deck-d51`
+- `infinity-deck-d52`
+- `restaurant-terrace-t61`
+- `restaurant-terrace-t62`
 
 ### Manual Table Codes
-- `42`
-- `17`
+- `17`, `18`, `19`
+- `25`, `26`
+- `31`, `32`
+- `42`, `43`, `44`
+- `51`, `52`
+- `61`, `62`
 
 ## Notes
 - Order is sent server-side via Pushover — no manual step required from the guest.
@@ -69,7 +85,7 @@ npm run build
 - Pushover credentials are server-side only (never exposed to the browser).
 - `/api/notify` enforces origin checks (allowlist), request validation, per-IP rate limiting, and timeout protection.
 - Multilingual guest UI is built in (`English`, `Português (Brasil)`, `Français`, `Español`).
-- Language auto-detects from browser and can be changed from the top selector on each screen.
+- Language defaults to `Português (Brasil)`, can be changed from the top selector on each screen, and is saved in browser storage.
 - Translation dictionaries live at:
   - `apps/web/src/locales/en.json`
   - `apps/web/src/locales/pt-BR.json`

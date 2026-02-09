@@ -19,6 +19,126 @@
         "17",
         "C17"
       ]
+    },
+    {
+      "id": "loc_3",
+      "token": "pool-north-u43",
+      "zoneName": "Pool North",
+      "spotLabel": "Umbrella 43",
+      "manualCodes": [
+        "43",
+        "U43"
+      ]
+    },
+    {
+      "id": "loc_4",
+      "token": "pool-north-u44",
+      "zoneName": "Pool North",
+      "spotLabel": "Umbrella 44",
+      "manualCodes": [
+        "44",
+        "U44"
+      ]
+    },
+    {
+      "id": "loc_5",
+      "token": "pool-east-c18",
+      "zoneName": "Pool East",
+      "spotLabel": "Cabana 18",
+      "manualCodes": [
+        "18",
+        "C18"
+      ]
+    },
+    {
+      "id": "loc_6",
+      "token": "pool-east-c19",
+      "zoneName": "Pool East",
+      "spotLabel": "Cabana 19",
+      "manualCodes": [
+        "19",
+        "C19"
+      ]
+    },
+    {
+      "id": "loc_7",
+      "token": "pool-south-u25",
+      "zoneName": "Pool South",
+      "spotLabel": "Umbrella 25",
+      "manualCodes": [
+        "25",
+        "U25"
+      ]
+    },
+    {
+      "id": "loc_8",
+      "token": "pool-south-u26",
+      "zoneName": "Pool South",
+      "spotLabel": "Umbrella 26",
+      "manualCodes": [
+        "26",
+        "U26"
+      ]
+    },
+    {
+      "id": "loc_9",
+      "token": "pool-west-l31",
+      "zoneName": "Pool West",
+      "spotLabel": "Lounger 31",
+      "manualCodes": [
+        "31",
+        "L31"
+      ]
+    },
+    {
+      "id": "loc_10",
+      "token": "pool-west-l32",
+      "zoneName": "Pool West",
+      "spotLabel": "Lounger 32",
+      "manualCodes": [
+        "32",
+        "L32"
+      ]
+    },
+    {
+      "id": "loc_11",
+      "token": "infinity-deck-d51",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Daybed 51",
+      "manualCodes": [
+        "51",
+        "D51"
+      ]
+    },
+    {
+      "id": "loc_12",
+      "token": "infinity-deck-d52",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Daybed 52",
+      "manualCodes": [
+        "52",
+        "D52"
+      ]
+    },
+    {
+      "id": "loc_13",
+      "token": "restaurant-terrace-t61",
+      "zoneName": "Restaurant Terrace",
+      "spotLabel": "Table 61",
+      "manualCodes": [
+        "61",
+        "T61"
+      ]
+    },
+    {
+      "id": "loc_14",
+      "token": "restaurant-terrace-t62",
+      "zoneName": "Restaurant Terrace",
+      "spotLabel": "Table 62",
+      "manualCodes": [
+        "62",
+        "T62"
+      ]
     }
   ],
   "menu": {
