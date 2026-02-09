@@ -163,5 +163,19 @@
   "menu.modifierOptions.opt_fried_egg.name": "Fried egg",
   "menu.modifierOptions.opt_avocado.name": "Avocado",
   "menu.modifierOptions.opt_side_fries.name": "Fries",
-  "menu.modifierOptions.opt_side_salad.name": "Green salad"
+  "menu.modifierOptions.opt_side_salad.name": "Green salad",
+  "menu.modifierGroups.mg_sugar.name": "Sugar",
+  "menu.modifierGroups.mg_fresh_herbs.name": "Fresh Herbs",
+  "menu.modifierGroups.mg_acai_toppings.name": "Acai Toppings",
+  "menu.modifierOptions.opt_no_sugar.name": "No sugar",
+  "menu.modifierOptions.opt_regular_sugar.name": "Regular sugar",
+  "menu.modifierOptions.opt_extra_sugar.name": "Extra sugar",
+  "menu.modifierOptions.opt_mint.name": "Mint",
+  "menu.modifierOptions.opt_rosemary.name": "Rosemary",
+  "menu.modifierOptions.opt_basil.name": "Basil",
+  "menu.modifierOptions.opt_acai_granola.name": "Granola",
+  "menu.modifierOptions.opt_acai_nutella.name": "Nutella",
+  "menu.modifierOptions.opt_acai_strawberry_syrup.name": "Strawberry syrup",
+  "menu.modifierOptions.opt_acai_condensed_milk.name": "Condensed milk",
+  "menu.modifierOptions.opt_acai_banana.name": "Banana slices"
 }

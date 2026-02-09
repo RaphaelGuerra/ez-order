@@ -22,7 +22,7 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
    ```
 2. Configure:
    - Copy `apps/web/.env.example` to `apps/web/.env`
-   - Optional: set `VITE_DISPLAY_CURRENCY` (ISO-4217 like `USD`, `BRL`, `EUR`)
+   - Optional: set `VITE_DISPLAY_CURRENCY` (ISO-4217 like `BRL`, `USD`, `EUR`; default is `BRL`)
    - Set Pushover secrets in Cloudflare Pages dashboard (Settings -> Environment variables):
      - `PUSHOVER_APP_TOKEN` — your Pushover application token
      - `PUSHOVER_USER_KEY` — user key or delivery group key for the waiter device(s)

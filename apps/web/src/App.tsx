@@ -103,8 +103,8 @@ const LOCALES: Record<LocaleCode, LocaleDictionary> = {
   es: esLocale,
 };
 
-const RAW_DISPLAY_CURRENCY = (import.meta.env.VITE_DISPLAY_CURRENCY ?? "USD").trim().toUpperCase();
-const DISPLAY_CURRENCY = /^[A-Z]{3}$/.test(RAW_DISPLAY_CURRENCY) ? RAW_DISPLAY_CURRENCY : "USD";
+const RAW_DISPLAY_CURRENCY = (import.meta.env.VITE_DISPLAY_CURRENCY ?? "BRL").trim().toUpperCase();
+const DISPLAY_CURRENCY = /^[A-Z]{3}$/.test(RAW_DISPLAY_CURRENCY) ? RAW_DISPLAY_CURRENCY : "BRL";
 
 const LOCATIONS = APP_CONFIG.locations;
 const MENU_CATEGORIES = [...APP_CONFIG.menu.categories].sort((a, b) => a.sortOrder - b.sortOrder);

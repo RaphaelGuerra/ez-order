@@ -91,6 +91,27 @@
         "minSelect": 0,
         "maxSelect": 1,
         "required": false
+      },
+      {
+        "id": "mg_sugar",
+        "name": "Sugar",
+        "minSelect": 0,
+        "maxSelect": 1,
+        "required": false
+      },
+      {
+        "id": "mg_fresh_herbs",
+        "name": "Fresh Herbs",
+        "minSelect": 0,
+        "maxSelect": 2,
+        "required": false
+      },
+      {
+        "id": "mg_acai_toppings",
+        "name": "Acai Toppings",
+        "minSelect": 0,
+        "maxSelect": 5,
+        "required": false
       }
     ],
     "modifierOptions": [
@@ -207,6 +228,72 @@
         "groupId": "mg_side",
         "name": "Green salad",
         "priceDeltaCents": 650
+      },
+      {
+        "id": "opt_no_sugar",
+        "groupId": "mg_sugar",
+        "name": "No sugar",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_regular_sugar",
+        "groupId": "mg_sugar",
+        "name": "Regular sugar",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_extra_sugar",
+        "groupId": "mg_sugar",
+        "name": "Extra sugar",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_mint",
+        "groupId": "mg_fresh_herbs",
+        "name": "Mint",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_rosemary",
+        "groupId": "mg_fresh_herbs",
+        "name": "Rosemary",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_basil",
+        "groupId": "mg_fresh_herbs",
+        "name": "Basil",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_acai_granola",
+        "groupId": "mg_acai_toppings",
+        "name": "Granola",
+        "priceDeltaCents": 200
+      },
+      {
+        "id": "opt_acai_nutella",
+        "groupId": "mg_acai_toppings",
+        "name": "Nutella",
+        "priceDeltaCents": 350
+      },
+      {
+        "id": "opt_acai_strawberry_syrup",
+        "groupId": "mg_acai_toppings",
+        "name": "Strawberry syrup",
+        "priceDeltaCents": 200
+      },
+      {
+        "id": "opt_acai_condensed_milk",
+        "groupId": "mg_acai_toppings",
+        "name": "Condensed milk",
+        "priceDeltaCents": 200
+      },
+      {
+        "id": "opt_acai_banana",
+        "groupId": "mg_acai_toppings",
+        "name": "Banana slices",
+        "priceDeltaCents": 150
       }
     ],
     "items": [
@@ -217,7 +304,9 @@
         "description": "500ml bottle",
         "basePriceCents": 600,
         "available": true,
-        "modifierGroupIds": []
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
       },
       {
         "id": "item_water_sparkling",
@@ -226,7 +315,9 @@
         "description": "500ml bottle",
         "basePriceCents": 700,
         "available": true,
-        "modifierGroupIds": []
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
       },
       {
         "id": "item_coke",
@@ -236,7 +327,8 @@
         "basePriceCents": 900,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar"
         ]
       },
       {
@@ -247,7 +339,8 @@
         "basePriceCents": 900,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar"
         ]
       },
       {
@@ -258,7 +351,8 @@
         "basePriceCents": 850,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar"
         ]
       },
       {
@@ -269,7 +363,8 @@
         "basePriceCents": 1200,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar"
         ]
       },
       {
@@ -280,7 +375,9 @@
         "basePriceCents": 1300,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
         ]
       },
       {
@@ -291,7 +388,8 @@
         "basePriceCents": 1600,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar"
         ]
       },
       {
@@ -302,7 +400,9 @@
         "basePriceCents": 1800,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
         ]
       },
       {
@@ -313,7 +413,9 @@
         "basePriceCents": 1750,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
         ]
       },
       {
@@ -324,7 +426,9 @@
         "basePriceCents": 1950,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
         ]
       },
       {
@@ -335,7 +439,9 @@
         "basePriceCents": 2100,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
         ]
       },
       {
@@ -346,7 +452,8 @@
         "basePriceCents": 2200,
         "available": true,
         "modifierGroupIds": [
-          "mg_ice"
+          "mg_ice",
+          "mg_sugar"
         ]
       },
       {
@@ -512,7 +619,9 @@
         "description": "Acai with banana and granola",
         "basePriceCents": 2300,
         "available": true,
-        "modifierGroupIds": []
+        "modifierGroupIds": [
+          "mg_acai_toppings"
+        ]
       },
       {
         "id": "item_fruit_salad",

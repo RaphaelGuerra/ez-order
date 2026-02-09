@@ -163,5 +163,19 @@
   "menu.modifierOptions.opt_fried_egg.name": "Huevo frito",
   "menu.modifierOptions.opt_avocado.name": "Aguacate",
   "menu.modifierOptions.opt_side_fries.name": "Papas fritas",
-  "menu.modifierOptions.opt_side_salad.name": "Ensalada verde"
+  "menu.modifierOptions.opt_side_salad.name": "Ensalada verde",
+  "menu.modifierGroups.mg_sugar.name": "Azúcar",
+  "menu.modifierGroups.mg_fresh_herbs.name": "Hierbas frescas",
+  "menu.modifierGroups.mg_acai_toppings.name": "Toppings del açaí",
+  "menu.modifierOptions.opt_no_sugar.name": "Sin azúcar",
+  "menu.modifierOptions.opt_regular_sugar.name": "Azúcar normal",
+  "menu.modifierOptions.opt_extra_sugar.name": "Azúcar extra",
+  "menu.modifierOptions.opt_mint.name": "Menta",
+  "menu.modifierOptions.opt_rosemary.name": "Romero",
+  "menu.modifierOptions.opt_basil.name": "Albahaca",
+  "menu.modifierOptions.opt_acai_granola.name": "Granola",
+  "menu.modifierOptions.opt_acai_nutella.name": "Nutella",
+  "menu.modifierOptions.opt_acai_strawberry_syrup.name": "Sirope de fresa",
+  "menu.modifierOptions.opt_acai_condensed_milk.name": "Leche condensada",
+  "menu.modifierOptions.opt_acai_banana.name": "Rodajas de banana"
 }
