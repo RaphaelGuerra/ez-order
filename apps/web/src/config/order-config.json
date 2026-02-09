@@ -1,13 +1,163 @@
 {
   "locations": [
     {
-      "id": "loc_1",
-      "token": "pool-north-u42",
+      "id": "loc_15",
+      "token": "pool-north-t01",
       "zoneName": "Pool North",
-      "spotLabel": "Umbrella 42",
+      "spotLabel": "Table 1",
       "manualCodes": [
-        "42",
-        "U42"
+        "1",
+        "T1"
+      ]
+    },
+    {
+      "id": "loc_16",
+      "token": "pool-north-t02",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 2",
+      "manualCodes": [
+        "2",
+        "T2"
+      ]
+    },
+    {
+      "id": "loc_17",
+      "token": "pool-north-t03",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 3",
+      "manualCodes": [
+        "3",
+        "T3"
+      ]
+    },
+    {
+      "id": "loc_18",
+      "token": "pool-north-t04",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 4",
+      "manualCodes": [
+        "4",
+        "T4"
+      ]
+    },
+    {
+      "id": "loc_19",
+      "token": "pool-north-t05",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 5",
+      "manualCodes": [
+        "5",
+        "T5"
+      ]
+    },
+    {
+      "id": "loc_20",
+      "token": "pool-north-t06",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 6",
+      "manualCodes": [
+        "6",
+        "T6"
+      ]
+    },
+    {
+      "id": "loc_21",
+      "token": "pool-north-t07",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 7",
+      "manualCodes": [
+        "7",
+        "T7"
+      ]
+    },
+    {
+      "id": "loc_22",
+      "token": "pool-north-t08",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 8",
+      "manualCodes": [
+        "8",
+        "T8"
+      ]
+    },
+    {
+      "id": "loc_23",
+      "token": "pool-north-t09",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 9",
+      "manualCodes": [
+        "9",
+        "T9"
+      ]
+    },
+    {
+      "id": "loc_24",
+      "token": "pool-north-t10",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 10",
+      "manualCodes": [
+        "10",
+        "T10"
+      ]
+    },
+    {
+      "id": "loc_25",
+      "token": "pool-north-t11",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 11",
+      "manualCodes": [
+        "11",
+        "T11"
+      ]
+    },
+    {
+      "id": "loc_26",
+      "token": "pool-north-t12",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 12",
+      "manualCodes": [
+        "12",
+        "T12"
+      ]
+    },
+    {
+      "id": "loc_27",
+      "token": "pool-north-t13",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 13",
+      "manualCodes": [
+        "13",
+        "T13"
+      ]
+    },
+    {
+      "id": "loc_28",
+      "token": "pool-north-t14",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 14",
+      "manualCodes": [
+        "14",
+        "T14"
+      ]
+    },
+    {
+      "id": "loc_29",
+      "token": "pool-north-t15",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 15",
+      "manualCodes": [
+        "15",
+        "T15"
+      ]
+    },
+    {
+      "id": "loc_30",
+      "token": "pool-north-t16",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 16",
+      "manualCodes": [
+        "16",
+        "T16"
       ]
     },
     {
@@ -18,26 +168,6 @@
       "manualCodes": [
         "17",
         "C17"
-      ]
-    },
-    {
-      "id": "loc_3",
-      "token": "pool-north-u43",
-      "zoneName": "Pool North",
-      "spotLabel": "Umbrella 43",
-      "manualCodes": [
-        "43",
-        "U43"
-      ]
-    },
-    {
-      "id": "loc_4",
-      "token": "pool-north-u44",
-      "zoneName": "Pool North",
-      "spotLabel": "Umbrella 44",
-      "manualCodes": [
-        "44",
-        "U44"
       ]
     },
     {
@@ -61,6 +191,56 @@
       ]
     },
     {
+      "id": "loc_31",
+      "token": "pool-north-t20",
+      "zoneName": "Pool North",
+      "spotLabel": "Table 20",
+      "manualCodes": [
+        "20",
+        "T20"
+      ]
+    },
+    {
+      "id": "loc_32",
+      "token": "pool-east-t21",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 21",
+      "manualCodes": [
+        "21",
+        "T21"
+      ]
+    },
+    {
+      "id": "loc_33",
+      "token": "pool-east-t22",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 22",
+      "manualCodes": [
+        "22",
+        "T22"
+      ]
+    },
+    {
+      "id": "loc_34",
+      "token": "pool-east-t23",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 23",
+      "manualCodes": [
+        "23",
+        "T23"
+      ]
+    },
+    {
+      "id": "loc_35",
+      "token": "pool-east-t24",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 24",
+      "manualCodes": [
+        "24",
+        "T24"
+      ]
+    },
+    {
       "id": "loc_7",
       "token": "pool-south-u25",
       "zoneName": "Pool South",
@@ -78,6 +258,46 @@
       "manualCodes": [
         "26",
         "U26"
+      ]
+    },
+    {
+      "id": "loc_36",
+      "token": "pool-east-t27",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 27",
+      "manualCodes": [
+        "27",
+        "T27"
+      ]
+    },
+    {
+      "id": "loc_37",
+      "token": "pool-east-t28",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 28",
+      "manualCodes": [
+        "28",
+        "T28"
+      ]
+    },
+    {
+      "id": "loc_38",
+      "token": "pool-east-t29",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 29",
+      "manualCodes": [
+        "29",
+        "T29"
+      ]
+    },
+    {
+      "id": "loc_39",
+      "token": "pool-east-t30",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 30",
+      "manualCodes": [
+        "30",
+        "T30"
       ]
     },
     {
@@ -101,6 +321,186 @@
       ]
     },
     {
+      "id": "loc_40",
+      "token": "pool-east-t33",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 33",
+      "manualCodes": [
+        "33",
+        "T33"
+      ]
+    },
+    {
+      "id": "loc_41",
+      "token": "pool-east-t34",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 34",
+      "manualCodes": [
+        "34",
+        "T34"
+      ]
+    },
+    {
+      "id": "loc_42",
+      "token": "pool-east-t35",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 35",
+      "manualCodes": [
+        "35",
+        "T35"
+      ]
+    },
+    {
+      "id": "loc_43",
+      "token": "pool-east-t36",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 36",
+      "manualCodes": [
+        "36",
+        "T36"
+      ]
+    },
+    {
+      "id": "loc_44",
+      "token": "pool-east-t37",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 37",
+      "manualCodes": [
+        "37",
+        "T37"
+      ]
+    },
+    {
+      "id": "loc_45",
+      "token": "pool-east-t38",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 38",
+      "manualCodes": [
+        "38",
+        "T38"
+      ]
+    },
+    {
+      "id": "loc_46",
+      "token": "pool-east-t39",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 39",
+      "manualCodes": [
+        "39",
+        "T39"
+      ]
+    },
+    {
+      "id": "loc_47",
+      "token": "pool-east-t40",
+      "zoneName": "Pool East",
+      "spotLabel": "Table 40",
+      "manualCodes": [
+        "40",
+        "T40"
+      ]
+    },
+    {
+      "id": "loc_48",
+      "token": "pool-south-t41",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 41",
+      "manualCodes": [
+        "41",
+        "T41"
+      ]
+    },
+    {
+      "id": "loc_1",
+      "token": "pool-north-u42",
+      "zoneName": "Pool North",
+      "spotLabel": "Umbrella 42",
+      "manualCodes": [
+        "42",
+        "U42"
+      ]
+    },
+    {
+      "id": "loc_3",
+      "token": "pool-north-u43",
+      "zoneName": "Pool North",
+      "spotLabel": "Umbrella 43",
+      "manualCodes": [
+        "43",
+        "U43"
+      ]
+    },
+    {
+      "id": "loc_4",
+      "token": "pool-north-u44",
+      "zoneName": "Pool North",
+      "spotLabel": "Umbrella 44",
+      "manualCodes": [
+        "44",
+        "U44"
+      ]
+    },
+    {
+      "id": "loc_49",
+      "token": "pool-south-t45",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 45",
+      "manualCodes": [
+        "45",
+        "T45"
+      ]
+    },
+    {
+      "id": "loc_50",
+      "token": "pool-south-t46",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 46",
+      "manualCodes": [
+        "46",
+        "T46"
+      ]
+    },
+    {
+      "id": "loc_51",
+      "token": "pool-south-t47",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 47",
+      "manualCodes": [
+        "47",
+        "T47"
+      ]
+    },
+    {
+      "id": "loc_52",
+      "token": "pool-south-t48",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 48",
+      "manualCodes": [
+        "48",
+        "T48"
+      ]
+    },
+    {
+      "id": "loc_53",
+      "token": "pool-south-t49",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 49",
+      "manualCodes": [
+        "49",
+        "T49"
+      ]
+    },
+    {
+      "id": "loc_54",
+      "token": "pool-south-t50",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 50",
+      "manualCodes": [
+        "50",
+        "T50"
+      ]
+    },
+    {
       "id": "loc_11",
       "token": "infinity-deck-d51",
       "zoneName": "Infinity Deck",
@@ -121,6 +521,86 @@
       ]
     },
     {
+      "id": "loc_55",
+      "token": "pool-south-t53",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 53",
+      "manualCodes": [
+        "53",
+        "T53"
+      ]
+    },
+    {
+      "id": "loc_56",
+      "token": "pool-south-t54",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 54",
+      "manualCodes": [
+        "54",
+        "T54"
+      ]
+    },
+    {
+      "id": "loc_57",
+      "token": "pool-south-t55",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 55",
+      "manualCodes": [
+        "55",
+        "T55"
+      ]
+    },
+    {
+      "id": "loc_58",
+      "token": "pool-south-t56",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 56",
+      "manualCodes": [
+        "56",
+        "T56"
+      ]
+    },
+    {
+      "id": "loc_59",
+      "token": "pool-south-t57",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 57",
+      "manualCodes": [
+        "57",
+        "T57"
+      ]
+    },
+    {
+      "id": "loc_60",
+      "token": "pool-south-t58",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 58",
+      "manualCodes": [
+        "58",
+        "T58"
+      ]
+    },
+    {
+      "id": "loc_61",
+      "token": "pool-south-t59",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 59",
+      "manualCodes": [
+        "59",
+        "T59"
+      ]
+    },
+    {
+      "id": "loc_62",
+      "token": "pool-south-t60",
+      "zoneName": "Pool South",
+      "spotLabel": "Table 60",
+      "manualCodes": [
+        "60",
+        "T60"
+      ]
+    },
+    {
       "id": "loc_13",
       "token": "restaurant-terrace-t61",
       "zoneName": "Restaurant Terrace",
@@ -138,6 +618,386 @@
       "manualCodes": [
         "62",
         "T62"
+      ]
+    },
+    {
+      "id": "loc_63",
+      "token": "pool-west-t63",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 63",
+      "manualCodes": [
+        "63",
+        "T63"
+      ]
+    },
+    {
+      "id": "loc_64",
+      "token": "pool-west-t64",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 64",
+      "manualCodes": [
+        "64",
+        "T64"
+      ]
+    },
+    {
+      "id": "loc_65",
+      "token": "pool-west-t65",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 65",
+      "manualCodes": [
+        "65",
+        "T65"
+      ]
+    },
+    {
+      "id": "loc_66",
+      "token": "pool-west-t66",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 66",
+      "manualCodes": [
+        "66",
+        "T66"
+      ]
+    },
+    {
+      "id": "loc_67",
+      "token": "pool-west-t67",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 67",
+      "manualCodes": [
+        "67",
+        "T67"
+      ]
+    },
+    {
+      "id": "loc_68",
+      "token": "pool-west-t68",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 68",
+      "manualCodes": [
+        "68",
+        "T68"
+      ]
+    },
+    {
+      "id": "loc_69",
+      "token": "pool-west-t69",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 69",
+      "manualCodes": [
+        "69",
+        "T69"
+      ]
+    },
+    {
+      "id": "loc_70",
+      "token": "pool-west-t70",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 70",
+      "manualCodes": [
+        "70",
+        "T70"
+      ]
+    },
+    {
+      "id": "loc_71",
+      "token": "pool-west-t71",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 71",
+      "manualCodes": [
+        "71",
+        "T71"
+      ]
+    },
+    {
+      "id": "loc_72",
+      "token": "pool-west-t72",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 72",
+      "manualCodes": [
+        "72",
+        "T72"
+      ]
+    },
+    {
+      "id": "loc_73",
+      "token": "pool-west-t73",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 73",
+      "manualCodes": [
+        "73",
+        "T73"
+      ]
+    },
+    {
+      "id": "loc_74",
+      "token": "pool-west-t74",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 74",
+      "manualCodes": [
+        "74",
+        "T74"
+      ]
+    },
+    {
+      "id": "loc_75",
+      "token": "pool-west-t75",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 75",
+      "manualCodes": [
+        "75",
+        "T75"
+      ]
+    },
+    {
+      "id": "loc_76",
+      "token": "pool-west-t76",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 76",
+      "manualCodes": [
+        "76",
+        "T76"
+      ]
+    },
+    {
+      "id": "loc_77",
+      "token": "pool-west-t77",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 77",
+      "manualCodes": [
+        "77",
+        "T77"
+      ]
+    },
+    {
+      "id": "loc_78",
+      "token": "pool-west-t78",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 78",
+      "manualCodes": [
+        "78",
+        "T78"
+      ]
+    },
+    {
+      "id": "loc_79",
+      "token": "pool-west-t79",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 79",
+      "manualCodes": [
+        "79",
+        "T79"
+      ]
+    },
+    {
+      "id": "loc_80",
+      "token": "pool-west-t80",
+      "zoneName": "Pool West",
+      "spotLabel": "Table 80",
+      "manualCodes": [
+        "80",
+        "T80"
+      ]
+    },
+    {
+      "id": "loc_81",
+      "token": "infinity-deck-t81",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 81",
+      "manualCodes": [
+        "81",
+        "T81"
+      ]
+    },
+    {
+      "id": "loc_82",
+      "token": "infinity-deck-t82",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 82",
+      "manualCodes": [
+        "82",
+        "T82"
+      ]
+    },
+    {
+      "id": "loc_83",
+      "token": "infinity-deck-t83",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 83",
+      "manualCodes": [
+        "83",
+        "T83"
+      ]
+    },
+    {
+      "id": "loc_84",
+      "token": "infinity-deck-t84",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 84",
+      "manualCodes": [
+        "84",
+        "T84"
+      ]
+    },
+    {
+      "id": "loc_85",
+      "token": "infinity-deck-t85",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 85",
+      "manualCodes": [
+        "85",
+        "T85"
+      ]
+    },
+    {
+      "id": "loc_86",
+      "token": "infinity-deck-t86",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 86",
+      "manualCodes": [
+        "86",
+        "T86"
+      ]
+    },
+    {
+      "id": "loc_87",
+      "token": "infinity-deck-t87",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 87",
+      "manualCodes": [
+        "87",
+        "T87"
+      ]
+    },
+    {
+      "id": "loc_88",
+      "token": "infinity-deck-t88",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 88",
+      "manualCodes": [
+        "88",
+        "T88"
+      ]
+    },
+    {
+      "id": "loc_89",
+      "token": "infinity-deck-t89",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 89",
+      "manualCodes": [
+        "89",
+        "T89"
+      ]
+    },
+    {
+      "id": "loc_90",
+      "token": "infinity-deck-t90",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 90",
+      "manualCodes": [
+        "90",
+        "T90"
+      ]
+    },
+    {
+      "id": "loc_91",
+      "token": "infinity-deck-t91",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 91",
+      "manualCodes": [
+        "91",
+        "T91"
+      ]
+    },
+    {
+      "id": "loc_92",
+      "token": "infinity-deck-t92",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 92",
+      "manualCodes": [
+        "92",
+        "T92"
+      ]
+    },
+    {
+      "id": "loc_93",
+      "token": "infinity-deck-t93",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 93",
+      "manualCodes": [
+        "93",
+        "T93"
+      ]
+    },
+    {
+      "id": "loc_94",
+      "token": "infinity-deck-t94",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 94",
+      "manualCodes": [
+        "94",
+        "T94"
+      ]
+    },
+    {
+      "id": "loc_95",
+      "token": "infinity-deck-t95",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 95",
+      "manualCodes": [
+        "95",
+        "T95"
+      ]
+    },
+    {
+      "id": "loc_96",
+      "token": "infinity-deck-t96",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 96",
+      "manualCodes": [
+        "96",
+        "T96"
+      ]
+    },
+    {
+      "id": "loc_97",
+      "token": "infinity-deck-t97",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 97",
+      "manualCodes": [
+        "97",
+        "T97"
+      ]
+    },
+    {
+      "id": "loc_98",
+      "token": "infinity-deck-t98",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 98",
+      "manualCodes": [
+        "98",
+        "T98"
+      ]
+    },
+    {
+      "id": "loc_99",
+      "token": "infinity-deck-t99",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 99",
+      "manualCodes": [
+        "99",
+        "T99"
+      ]
+    },
+    {
+      "id": "loc_100",
+      "token": "infinity-deck-t100",
+      "zoneName": "Infinity Deck",
+      "spotLabel": "Table 100",
+      "manualCodes": [
+        "100",
+        "T100"
       ]
     }
   ],
@@ -424,7 +1284,9 @@
         "description": "500ml bottle",
         "basePriceCents": 600,
         "available": true,
-        "modifierGroupIds": ["mg_ice"],
+        "modifierGroupIds": [
+          "mg_ice"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -434,7 +1296,9 @@
         "description": "500ml bottle",
         "basePriceCents": 700,
         "available": true,
-        "modifierGroupIds": ["mg_ice"],
+        "modifierGroupIds": [
+          "mg_ice"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -444,7 +1308,10 @@
         "description": "350ml can",
         "basePriceCents": 900,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -454,7 +1321,10 @@
         "description": "350ml can",
         "basePriceCents": 900,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -464,7 +1334,10 @@
         "description": "350ml can",
         "basePriceCents": 850,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -474,7 +1347,10 @@
         "description": "Freshly squeezed",
         "basePriceCents": 1200,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -484,7 +1360,11 @@
         "description": "Fresh and refreshing",
         "basePriceCents": 1300,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -494,7 +1374,10 @@
         "description": "250ml can",
         "basePriceCents": 1600,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -504,7 +1387,11 @@
         "description": "Fresh mint, lime, soda",
         "basePriceCents": 1800,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -514,7 +1401,11 @@
         "description": "Cachaca, lime, sugar",
         "basePriceCents": 1750,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -524,7 +1415,11 @@
         "description": "Premium gin, tonic and citrus",
         "basePriceCents": 1950,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -534,7 +1429,11 @@
         "description": "Aperol, sparkling wine and soda",
         "basePriceCents": 2100,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar",
+          "mg_fresh_herbs"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1560512823-829485b8bf24?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -544,7 +1443,10 @@
         "description": "Rum, coconut and pineapple",
         "basePriceCents": 2200,
         "available": true,
-        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "modifierGroupIds": [
+          "mg_ice",
+          "mg_sugar"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -554,7 +1456,9 @@
         "description": "Crispy potato portion",
         "basePriceCents": 1600,
         "available": true,
-        "modifierGroupIds": ["mg_sauce"],
+        "modifierGroupIds": [
+          "mg_sauce"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -564,7 +1468,9 @@
         "description": "Parmesan and truffle touch",
         "basePriceCents": 2200,
         "available": true,
-        "modifierGroupIds": ["mg_sauce"],
+        "modifierGroupIds": [
+          "mg_sauce"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -574,7 +1480,9 @@
         "description": "Breaded chicken strips",
         "basePriceCents": 2400,
         "available": true,
-        "modifierGroupIds": ["mg_sauce"],
+        "modifierGroupIds": [
+          "mg_sauce"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -584,7 +1492,9 @@
         "description": "6-unit portion",
         "basePriceCents": 1800,
         "available": true,
-        "modifierGroupIds": ["mg_sauce"],
+        "modifierGroupIds": [
+          "mg_sauce"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -594,7 +1504,9 @@
         "description": "6-unit portion",
         "basePriceCents": 2600,
         "available": true,
-        "modifierGroupIds": ["mg_sauce"],
+        "modifierGroupIds": [
+          "mg_sauce"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -604,7 +1516,11 @@
         "description": "Grilled chicken, bacon and lettuce",
         "basePriceCents": 2800,
         "available": true,
-        "modifierGroupIds": ["mg_sandwich_bread", "mg_addons", "mg_side"],
+        "modifierGroupIds": [
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -614,7 +1530,12 @@
         "description": "180g beef patty, cheese and salad",
         "basePriceCents": 2900,
         "available": true,
-        "modifierGroupIds": ["mg_meat_point", "mg_sandwich_bread", "mg_addons", "mg_side"],
+        "modifierGroupIds": [
+          "mg_meat_point",
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -624,7 +1545,11 @@
         "description": "Chicken breast, cheese and greens",
         "basePriceCents": 2700,
         "available": true,
-        "modifierGroupIds": ["mg_sandwich_bread", "mg_addons", "mg_side"],
+        "modifierGroupIds": [
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -634,7 +1559,12 @@
         "description": "Filet, cheese and caramelized onions",
         "basePriceCents": 3400,
         "available": true,
-        "modifierGroupIds": ["mg_meat_point", "mg_sandwich_bread", "mg_addons", "mg_side"],
+        "modifierGroupIds": [
+          "mg_meat_point",
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -644,8 +1574,12 @@
         "description": "Chickpea patty and salad",
         "basePriceCents": 2800,
         "available": true,
-        "modifierGroupIds": ["mg_sandwich_bread", "mg_addons", "mg_side"],
-        "imageUrl": "https://images.unsplash.com/photo-1520072959219-c595e6cdc07e?w=400&h=300&fit=crop&auto=format"
+        "modifierGroupIds": [
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_hot_mix",
@@ -654,7 +1588,9 @@
         "description": "Toasted sandwich",
         "basePriceCents": 1700,
         "available": true,
-        "modifierGroupIds": ["mg_addons"],
+        "modifierGroupIds": [
+          "mg_addons"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -664,7 +1600,10 @@
         "description": "Chicken, lettuce and house sauce",
         "basePriceCents": 2400,
         "available": true,
-        "modifierGroupIds": ["mg_sauce", "mg_addons"],
+        "modifierGroupIds": [
+          "mg_sauce",
+          "mg_addons"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -674,8 +1613,10 @@
         "description": "Light and gluten-free",
         "basePriceCents": 1900,
         "available": true,
-        "modifierGroupIds": ["mg_addons"],
-        "imageUrl": "https://images.unsplash.com/photo-1519676867240-f03562e64571?w=400&h=300&fit=crop&auto=format"
+        "modifierGroupIds": [
+          "mg_addons"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_acai_bowl",
@@ -684,7 +1625,9 @@
         "description": "Acai with banana and granola",
         "basePriceCents": 2300,
         "available": true,
-        "modifierGroupIds": ["mg_acai_toppings"],
+        "modifierGroupIds": [
+          "mg_acai_toppings"
+        ],
         "imageUrl": "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop&auto=format"
       },
       {
@@ -695,7 +1638,7 @@
         "basePriceCents": 1600,
         "available": true,
         "modifierGroupIds": [],
-        "imageUrl": "https://images.unsplash.com/photo-1564093497595-593b96d80571?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&auto=format"
       }
     ]
   },

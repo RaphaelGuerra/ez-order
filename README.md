@@ -54,29 +54,21 @@ npm run build
 - `/g/:locationToken/sent` order confirmation
 
 ## Seeded Table Setup
-### QR Tokens
-- `pool-north-u42`
-- `pool-north-u43`
-- `pool-north-u44`
-- `pool-east-c17`
-- `pool-east-c18`
-- `pool-east-c19`
-- `pool-south-u25`
-- `pool-south-u26`
-- `pool-west-l31`
-- `pool-west-l32`
-- `infinity-deck-d51`
-- `infinity-deck-d52`
-- `restaurant-terrace-t61`
-- `restaurant-terrace-t62`
-
 ### Manual Table Codes
-- `17`, `18`, `19`
-- `25`, `26`
-- `31`, `32`
-- `42`, `43`, `44`
-- `51`, `52`
-- `61`, `62`
+- `1` to `100` are now seeded and available.
+
+### Area Distribution
+- `1` to `20`: `Pool North`
+- `21` to `40`: `Pool East`
+- `41` to `60`: `Pool South`
+- `61` to `80`: `Pool West`
+- `81` to `100`: `Infinity Deck`
+
+### Legacy/Special Spots Kept
+- `17`, `18`, `19`: Pool East cabanas (`C17`, `C18`, `C19`)
+- `42`, `43`, `44`: Pool North umbrellas (`U42`, `U43`, `U44`)
+- `51`, `52`: Infinity deck daybeds (`D51`, `D52`)
+- `61`, `62`: Restaurant terrace tables (`T61`, `T62`)
 
 ## Notes
 - Order is sent server-side via Pushover — no manual step required from the guest.
