@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -38,6 +39,7 @@ type MenuItem = {
   basePriceCents: number;
   available: boolean;
   modifierGroupIds: string[];
+  imageUrl?: string;
 };
 
 type CartLine = {
@@ -625,6 +627,8 @@ function GuestMenuPage() {
     const cart = localGet<CartLine[]>(cartKey(locationToken)) ?? [];
     return cart.reduce((count, line) => count + line.quantity, 0);
   });
+  const [toastText, setToastText] = useState<string | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   if (!location) {
     return <Navigate to="/" replace />;
@@ -732,6 +736,11 @@ function GuestMenuPage() {
     localSet(cartKey(locationToken), existing);
     setCartCount(existing.reduce((count, line) => count + line.quantity, 0));
     setConfig(null);
+
+    const itemName = getMenuItemName(item, t);
+    setToastText(t("toast.item_added", "{item} added to cart", { item: itemName }));
+    clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToastText(null), 2000);
   };
 
   return (
@@ -758,6 +767,18 @@ function GuestMenuPage() {
         ) : (
           items.map((item) => (
             <article key={item.id} className={`panel${!item.available ? " item-unavailable" : ""}`}>
+              {item.imageUrl ? (
+                <div className="menu-item-thumb">
+                  <img
+                    src={item.imageUrl}
+                    alt=""
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                    }}
+                  />
+                </div>
+              ) : null}
               <h3>{getMenuItemName(item, t)}</h3>
               <p className="subtle">{getMenuItemDescription(item, t)}</p>
               <p className="price">{formatMoney(item.basePriceCents)}</p>
@@ -804,6 +825,18 @@ function GuestMenuPage() {
             >
               ×
             </button>
+            {config.item.imageUrl ? (
+              <div className="menu-item-hero">
+                <img
+                  src={config.item.imageUrl}
+                  alt=""
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                  }}
+                />
+              </div>
+            ) : null}
             <h3>{getMenuItemName(config.item, t)}</h3>
             {config.item.modifierGroupIds.map((groupId) => {
               const group = MODIFIER_GROUP_BY_ID.get(groupId);
@@ -904,6 +937,10 @@ function GuestMenuPage() {
           </section>
         </div>
       ) : null}
+
+      <div role="status" aria-live="polite">
+        {toastText ? <div className="toast">{toastText}</div> : null}
+      </div>
     </Screen>
   );
 }

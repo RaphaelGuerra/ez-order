@@ -177,5 +177,6 @@
   "menu.modifierOptions.opt_acai_nutella.name": "Nutella",
   "menu.modifierOptions.opt_acai_strawberry_syrup.name": "Sirope de fresa",
   "menu.modifierOptions.opt_acai_condensed_milk.name": "Leche condensada",
-  "menu.modifierOptions.opt_acai_banana.name": "Rodajas de banana"
+  "menu.modifierOptions.opt_acai_banana.name": "Rodajas de banana",
+  "toast.item_added": "{item} agregado al carrito"
 }

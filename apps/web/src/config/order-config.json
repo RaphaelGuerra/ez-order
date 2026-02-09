@@ -304,9 +304,8 @@
         "description": "500ml bottle",
         "basePriceCents": 600,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice"
-        ]
+        "modifierGroupIds": ["mg_ice"],
+        "imageUrl": "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_water_sparkling",
@@ -315,9 +314,8 @@
         "description": "500ml bottle",
         "basePriceCents": 700,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice"
-        ]
+        "modifierGroupIds": ["mg_ice"],
+        "imageUrl": "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_coke",
@@ -326,10 +324,8 @@
         "description": "350ml can",
         "basePriceCents": 900,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "imageUrl": "https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_coke_zero",
@@ -338,10 +334,8 @@
         "description": "350ml can",
         "basePriceCents": 900,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "imageUrl": "https://images.unsplash.com/photo-1624552184280-9e9631bbeee9?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_guarana",
@@ -350,10 +344,8 @@
         "description": "350ml can",
         "basePriceCents": 850,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "imageUrl": "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_orange_juice",
@@ -362,10 +354,8 @@
         "description": "Freshly squeezed",
         "basePriceCents": 1200,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "imageUrl": "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_pineapple_mint_juice",
@@ -374,11 +364,8 @@
         "description": "Fresh and refreshing",
         "basePriceCents": 1300,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar",
-          "mg_fresh_herbs"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "imageUrl": "https://images.unsplash.com/photo-1589733955941-5eeaf752f6dd?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_energy_drink",
@@ -387,10 +374,8 @@
         "description": "250ml can",
         "basePriceCents": 1600,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "imageUrl": "https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_mojito",
@@ -399,11 +384,8 @@
         "description": "Fresh mint, lime, soda",
         "basePriceCents": 1800,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar",
-          "mg_fresh_herbs"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "imageUrl": "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_caipirinha",
@@ -412,11 +394,8 @@
         "description": "Cachaca, lime, sugar",
         "basePriceCents": 1750,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar",
-          "mg_fresh_herbs"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "imageUrl": "https://images.unsplash.com/photo-1536935338788-846bb9981813?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_gin_tonic",
@@ -425,11 +404,8 @@
         "description": "Premium gin, tonic and citrus",
         "basePriceCents": 1950,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar",
-          "mg_fresh_herbs"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "imageUrl": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_aperol_spritz",
@@ -438,11 +414,8 @@
         "description": "Aperol, sparkling wine and soda",
         "basePriceCents": 2100,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar",
-          "mg_fresh_herbs"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar", "mg_fresh_herbs"],
+        "imageUrl": "https://images.unsplash.com/photo-1560512823-829485b8bf24?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_pina_colada",
@@ -451,10 +424,8 @@
         "description": "Rum, coconut and pineapple",
         "basePriceCents": 2200,
         "available": true,
-        "modifierGroupIds": [
-          "mg_ice",
-          "mg_sugar"
-        ]
+        "modifierGroupIds": ["mg_ice", "mg_sugar"],
+        "imageUrl": "https://images.unsplash.com/photo-1587223962930-cb7f31384c19?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_fries",
@@ -463,9 +434,8 @@
         "description": "Crispy potato portion",
         "basePriceCents": 1600,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sauce"
-        ]
+        "modifierGroupIds": ["mg_sauce"],
+        "imageUrl": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_truffle_fries",
@@ -474,9 +444,8 @@
         "description": "Parmesan and truffle touch",
         "basePriceCents": 2200,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sauce"
-        ]
+        "modifierGroupIds": ["mg_sauce"],
+        "imageUrl": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_chicken_tenders",
@@ -485,9 +454,8 @@
         "description": "Breaded chicken strips",
         "basePriceCents": 2400,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sauce"
-        ]
+        "modifierGroupIds": ["mg_sauce"],
+        "imageUrl": "https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_cheese_pastel",
@@ -496,9 +464,8 @@
         "description": "6-unit portion",
         "basePriceCents": 1800,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sauce"
-        ]
+        "modifierGroupIds": ["mg_sauce"],
+        "imageUrl": "https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_shrimp_croquette",
@@ -507,9 +474,8 @@
         "description": "6-unit portion",
         "basePriceCents": 2600,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sauce"
-        ]
+        "modifierGroupIds": ["mg_sauce"],
+        "imageUrl": "https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_club_sandwich",
@@ -518,11 +484,8 @@
         "description": "Grilled chicken, bacon and lettuce",
         "basePriceCents": 2800,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sandwich_bread",
-          "mg_addons",
-          "mg_side"
-        ]
+        "modifierGroupIds": ["mg_sandwich_bread", "mg_addons", "mg_side"],
+        "imageUrl": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_cheeseburger",
@@ -531,12 +494,8 @@
         "description": "180g beef patty, cheese and salad",
         "basePriceCents": 2900,
         "available": true,
-        "modifierGroupIds": [
-          "mg_meat_point",
-          "mg_sandwich_bread",
-          "mg_addons",
-          "mg_side"
-        ]
+        "modifierGroupIds": ["mg_meat_point", "mg_sandwich_bread", "mg_addons", "mg_side"],
+        "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_chicken_sandwich",
@@ -545,11 +504,8 @@
         "description": "Chicken breast, cheese and greens",
         "basePriceCents": 2700,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sandwich_bread",
-          "mg_addons",
-          "mg_side"
-        ]
+        "modifierGroupIds": ["mg_sandwich_bread", "mg_addons", "mg_side"],
+        "imageUrl": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_filet_mignon_sandwich",
@@ -558,12 +514,8 @@
         "description": "Filet, cheese and caramelized onions",
         "basePriceCents": 3400,
         "available": true,
-        "modifierGroupIds": [
-          "mg_meat_point",
-          "mg_sandwich_bread",
-          "mg_addons",
-          "mg_side"
-        ]
+        "modifierGroupIds": ["mg_meat_point", "mg_sandwich_bread", "mg_addons", "mg_side"],
+        "imageUrl": "https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_veggie_burger",
@@ -572,11 +524,8 @@
         "description": "Chickpea patty and salad",
         "basePriceCents": 2800,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sandwich_bread",
-          "mg_addons",
-          "mg_side"
-        ]
+        "modifierGroupIds": ["mg_sandwich_bread", "mg_addons", "mg_side"],
+        "imageUrl": "https://images.unsplash.com/photo-1520072959219-c595e6cdc07e?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_hot_mix",
@@ -585,9 +534,8 @@
         "description": "Toasted sandwich",
         "basePriceCents": 1700,
         "available": true,
-        "modifierGroupIds": [
-          "mg_addons"
-        ]
+        "modifierGroupIds": ["mg_addons"],
+        "imageUrl": "https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_chicken_wrap",
@@ -596,10 +544,8 @@
         "description": "Chicken, lettuce and house sauce",
         "basePriceCents": 2400,
         "available": true,
-        "modifierGroupIds": [
-          "mg_sauce",
-          "mg_addons"
-        ]
+        "modifierGroupIds": ["mg_sauce", "mg_addons"],
+        "imageUrl": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_tapioca_cheese",
@@ -608,9 +554,8 @@
         "description": "Light and gluten-free",
         "basePriceCents": 1900,
         "available": true,
-        "modifierGroupIds": [
-          "mg_addons"
-        ]
+        "modifierGroupIds": ["mg_addons"],
+        "imageUrl": "https://images.unsplash.com/photo-1519676867240-f03562e64571?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_acai_bowl",
@@ -619,9 +564,8 @@
         "description": "Acai with banana and granola",
         "basePriceCents": 2300,
         "available": true,
-        "modifierGroupIds": [
-          "mg_acai_toppings"
-        ]
+        "modifierGroupIds": ["mg_acai_toppings"],
+        "imageUrl": "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_fruit_salad",
@@ -630,7 +574,8 @@
         "description": "Seasonal fresh fruits",
         "basePriceCents": 1600,
         "available": true,
-        "modifierGroupIds": []
+        "modifierGroupIds": [],
+        "imageUrl": "https://images.unsplash.com/photo-1564093497595-593b96d80571?w=400&h=300&fit=crop&auto=format"
       }
     ]
   },

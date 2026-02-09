@@ -177,5 +177,6 @@
   "menu.modifierOptions.opt_acai_nutella.name": "Nutella",
   "menu.modifierOptions.opt_acai_strawberry_syrup.name": "Strawberry syrup",
   "menu.modifierOptions.opt_acai_condensed_milk.name": "Condensed milk",
-  "menu.modifierOptions.opt_acai_banana.name": "Banana slices"
+  "menu.modifierOptions.opt_acai_banana.name": "Banana slices",
+  "toast.item_added": "{item} added to cart"
 }

@@ -177,5 +177,6 @@
   "menu.modifierOptions.opt_acai_nutella.name": "Nutella",
   "menu.modifierOptions.opt_acai_strawberry_syrup.name": "Sirop de fraise",
   "menu.modifierOptions.opt_acai_condensed_milk.name": "Lait concentré sucré",
-  "menu.modifierOptions.opt_acai_banana.name": "Rondelles de banane"
+  "menu.modifierOptions.opt_acai_banana.name": "Rondelles de banane",
+  "toast.item_added": "{item} ajout\u00e9 au panier"
 }
