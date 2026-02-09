@@ -14,8 +14,6 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
 - `apps/web`: React + Vite guest app (QR/manual table -> menu -> cart -> push notification).
 - `apps/web/src/config/order-config.json`: single source of truth for locations, table codes, menu, and pricing.
 - `functions/api/notify.ts`: Cloudflare Pages Function that calls the Pushover API.
-- `docs/01-prd.md`: product requirements.
-- `docs/02-ui-spec.md`: UI/routes/state spec for the implemented guest flow.
 
 ## Quick Start
 1. Install dependencies:
