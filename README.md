@@ -28,6 +28,10 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
    - Set Pushover secrets in Cloudflare Pages dashboard (Settings -> Environment variables):
      - `PUSHOVER_APP_TOKEN` — your Pushover application token
      - `PUSHOVER_USER_KEY` — user key or delivery group key for the waiter device(s)
+   - Optional hardening env vars in Cloudflare Pages:
+     - `ALLOWED_ORIGINS` — comma-separated origin allowlist for `/api/notify` (defaults to same origin only)
+     - `NOTIFY_RATE_LIMIT_PER_MINUTE` — per-IP notify request limit (default: `8`)
+     - `PUSHOVER_TIMEOUT_MS` — outbound timeout to Pushover (default: `8000`)
 3. Start app:
    ```bash
    npm run dev
@@ -65,6 +69,7 @@ npm run build
 - The cart is cleared automatically when the notification is confirmed sent.
 - Allergy/notes text is included in the push notification message but not persisted locally.
 - Pushover credentials are server-side only (never exposed to the browser).
+- `/api/notify` enforces origin checks (allowlist), request validation, per-IP rate limiting, and timeout protection.
 - Multilingual guest UI is built in (`English`, `Português (Brasil)`, `Français`, `Español`).
 - Language auto-detects from browser and can be changed from the top selector on each screen.
 - Translation dictionaries live at:

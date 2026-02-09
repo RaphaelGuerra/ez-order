@@ -85,6 +85,10 @@ Rules:
 - Menu/location/pricing values come from `apps/web/src/config/order-config.json`.
 - UI currency controlled by `VITE_DISPLAY_CURRENCY` (default `USD`).
 - Pushover credentials (`PUSHOVER_APP_TOKEN`, `PUSHOVER_USER_KEY`) set as environment variables in Cloudflare Pages dashboard.
+- Notify hardening options:
+  - `ALLOWED_ORIGINS` (origin allowlist, defaults to same-origin only)
+  - `NOTIFY_RATE_LIMIT_PER_MINUTE` (per-IP limit, defaults to 8)
+  - `PUSHOVER_TIMEOUT_MS` (upstream timeout, defaults to 8000ms)
 
 ## 7. Accessibility and Mobile Usability
 - 48px minimum touch-friendly button heights.
