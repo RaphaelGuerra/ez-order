@@ -453,11 +453,9 @@ function Screen(props: { title: string; subtitle?: string; children: ReactNode }
   return (
     <main className="screen">
       <div className="brand-bar">
-        <div className="brand-mark">
-          <LeafIcon size={20} />
-        </div>
+        <img className="brand-logo" src="/logo.png" alt="Itatiaia Resort & Eventos" />
         <div className="brand-text">
-          <span className="brand-name">Itatiaia Eco Resort</span>
+          <span className="brand-name">Itatiaia Resort & Eventos</span>
           <span className="brand-tagline">Poolside Ordering</span>
         </div>
       </div>

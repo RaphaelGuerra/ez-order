@@ -1,5 +1,5 @@
 /* ========================================
-   Itatiaia Eco Resort — EZ-Order
+   Itatiaia Resort & Eventos — EZ-Order
    Tropical Forest Luxury Design System
    ======================================== */
 
@@ -60,6 +60,46 @@
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141312;
+    --bg-warm: #1a1917;
+    --surface: #1e1d1b;
+    --surface-warm: #242320;
+    --text: #ece8e1;
+    --text-secondary: #a8a49c;
+    --text-tertiary: #706c64;
+
+    --primary: #3a9e78;
+    --primary-dark: #2d7a5e;
+    --primary-light: #1a2e25;
+    --primary-hover: #45b288;
+    --primary-glow: rgba(58, 158, 120, 0.15);
+
+    --accent: #d4aa4f;
+    --accent-hover: #e0bb66;
+    --accent-light: rgba(212, 170, 79, 0.08);
+    --accent-glow: rgba(212, 170, 79, 0.20);
+
+    --success: #3aad73;
+    --success-light: #162e22;
+    --danger: #e05a4e;
+    --danger-light: rgba(224, 90, 78, 0.10);
+    --warning: #dea030;
+    --warning-light: rgba(222, 160, 48, 0.10);
+
+    --border: #2e2d2a;
+    --border-light: #272623;
+    --divider: #272623;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.20);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+    --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.30), 0 1px 4px rgba(0, 0, 0, 0.20);
+    --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.40), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-accent: 0 4px 20px rgba(212, 170, 79, 0.20);
+  }
 }
 
 * {
@@ -1056,7 +1096,43 @@ textarea {
   min-height: 44px;
 }
 
-/* --- 22. Reduced Motion --- */
+/* --- 22. Brand Logo --- */
+.brand-logo {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* --- 23. Dark Mode Overrides (hardcoded colors) --- */
+@media (prefers-color-scheme: dark) {
+  body::before {
+    background:
+      radial-gradient(ellipse 80% 50% at 90% 0%, rgba(212, 170, 79, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 70% at 5% 95%, rgba(58, 158, 120, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 50% 50%, rgba(212, 170, 79, 0.03) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 70% 70%, rgba(45, 122, 94, 0.04) 0%, transparent 50%);
+  }
+
+  .button-danger {
+    background: linear-gradient(180deg, var(--danger) 0%, var(--danger) 100%);
+  }
+
+  .modal-backdrop {
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .sticky-footer {
+    background: rgba(20, 19, 18, 0.88);
+    border-top: 1px solid rgba(46, 45, 42, 0.6);
+  }
+
+  .brand-logo {
+    filter: brightness(1.6) contrast(0.9);
+  }
+}
+
+/* --- 24. Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
