@@ -206,6 +206,17 @@
   "location.loc_13.spot": "Table 61",
   "location.loc_14.zone": "Terrasse du restaurant",
   "location.loc_14.spot": "Table 62",
+  "location.zone.pool_north": "Piscine Nord",
+  "location.zone.pool_east": "Piscine Est",
+  "location.zone.pool_south": "Piscine Sud",
+  "location.zone.pool_west": "Piscine Ouest",
+  "location.zone.infinity_deck": "Deck Infinity",
+  "location.zone.restaurant_terrace": "Terrasse du restaurant",
+  "location.spot.table": "Table {number}",
+  "location.spot.umbrella": "Parasol {number}",
+  "location.spot.cabana": "Cabane {number}",
+  "location.spot.daybed": "Lit balinais {number}",
+  "location.spot.lounger": "Transat {number}",
   "media.image_unavailable": "Image indisponible",
   "toast.item_added": "{item} ajout\u00e9 au panier"
 }

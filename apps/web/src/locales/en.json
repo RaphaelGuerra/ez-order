@@ -206,6 +206,17 @@
   "location.loc_13.spot": "Table 61",
   "location.loc_14.zone": "Restaurant Terrace",
   "location.loc_14.spot": "Table 62",
+  "location.zone.pool_north": "Pool North",
+  "location.zone.pool_east": "Pool East",
+  "location.zone.pool_south": "Pool South",
+  "location.zone.pool_west": "Pool West",
+  "location.zone.infinity_deck": "Infinity Deck",
+  "location.zone.restaurant_terrace": "Restaurant Terrace",
+  "location.spot.table": "Table {number}",
+  "location.spot.umbrella": "Umbrella {number}",
+  "location.spot.cabana": "Cabana {number}",
+  "location.spot.daybed": "Daybed {number}",
+  "location.spot.lounger": "Lounger {number}",
   "media.image_unavailable": "Image unavailable",
   "toast.item_added": "{item} added to cart"
 }

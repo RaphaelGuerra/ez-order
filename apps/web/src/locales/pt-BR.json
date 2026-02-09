@@ -206,6 +206,17 @@
   "location.loc_13.spot": "Mesa 61",
   "location.loc_14.zone": "Terraço do restaurante",
   "location.loc_14.spot": "Mesa 62",
+  "location.zone.pool_north": "Piscina Norte",
+  "location.zone.pool_east": "Piscina Leste",
+  "location.zone.pool_south": "Piscina Sul",
+  "location.zone.pool_west": "Piscina Oeste",
+  "location.zone.infinity_deck": "Deck Infinito",
+  "location.zone.restaurant_terrace": "Terraço do restaurante",
+  "location.spot.table": "Mesa {number}",
+  "location.spot.umbrella": "Ombrelone {number}",
+  "location.spot.cabana": "Cabana {number}",
+  "location.spot.daybed": "Cama balinesa {number}",
+  "location.spot.lounger": "Espreguiçadeira {number}",
   "media.image_unavailable": "Imagem indisponível",
   "toast.item_added": "{item} adicionado ao carrinho"
 }

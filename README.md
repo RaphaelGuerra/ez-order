@@ -61,8 +61,9 @@ npm run build
 - `1` to `20`: `Pool North`
 - `21` to `40`: `Pool East`
 - `41` to `60`: `Pool South`
-- `61` to `80`: `Pool West`
+- `63` to `80`: `Pool West`
 - `81` to `100`: `Infinity Deck`
+- `61` and `62`: `Restaurant Terrace` (special mapped spots)
 
 ### Legacy/Special Spots Kept
 - `17`, `18`, `19`: Pool East cabanas (`C17`, `C18`, `C19`)

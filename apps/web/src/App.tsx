@@ -124,6 +124,25 @@ const CART_PREFIX = "ez-order:cart:";
 const I18nContext = createContext<I18nContextValue | null>(null);
 const MAX_FREE_TEXT_LENGTH = 280;
 const NOTIFY_REQUEST_TIMEOUT_MS = 12_000;
+const ZONE_TRANSLATION_KEY_BY_VALUE: Record<string, string> = {
+  "Pool North": "location.zone.pool_north",
+  "Pool East": "location.zone.pool_east",
+  "Pool South": "location.zone.pool_south",
+  "Pool West": "location.zone.pool_west",
+  "Infinity Deck": "location.zone.infinity_deck",
+  "Restaurant Terrace": "location.zone.restaurant_terrace",
+};
+const SPOT_TRANSLATION_PATTERNS: Array<{
+  pattern: RegExp;
+  key: string;
+  fallback: string;
+}> = [
+  { pattern: /^Table\s+(\d+)$/i, key: "location.spot.table", fallback: "Table {number}" },
+  { pattern: /^Umbrella\s+(\d+)$/i, key: "location.spot.umbrella", fallback: "Umbrella {number}" },
+  { pattern: /^Cabana\s+(\d+)$/i, key: "location.spot.cabana", fallback: "Cabana {number}" },
+  { pattern: /^Daybed\s+(\d+)$/i, key: "location.spot.daybed", fallback: "Daybed {number}" },
+  { pattern: /^Lounger\s+(\d+)$/i, key: "location.spot.lounger", fallback: "Lounger {number}" },
+];
 
 function cartKey(locationToken: string): string {
   return `${CART_PREFIX}${locationToken}`;
@@ -221,14 +240,30 @@ function normalizeCode(value: string): string {
   return value.trim().toUpperCase();
 }
 
+function normalizeManualCode(value: string): string {
+  const normalized = normalizeCode(value);
+
+  const pureNumberMatch = /^0*(\d+)$/.exec(normalized);
+  if (pureNumberMatch) {
+    return String(Number.parseInt(pureNumberMatch[1], 10));
+  }
+
+  const prefixedNumberMatch = /^([A-Z]+)0*(\d+)$/.exec(normalized);
+  if (prefixedNumberMatch) {
+    return `${prefixedNumberMatch[1]}${Number.parseInt(prefixedNumberMatch[2], 10)}`;
+  }
+
+  return normalized;
+}
+
 function findLocationByToken(token: string): Location | undefined {
   return LOCATIONS.find((location) => location.token === token);
 }
 
 function findLocationByManualCode(code: string): Location | undefined {
-  const normalized = normalizeCode(code);
+  const normalized = normalizeManualCode(code);
   return LOCATIONS.find((location) =>
-    location.manualCodes.some((allowed) => normalizeCode(allowed) === normalized),
+    location.manualCodes.some((allowed) => normalizeManualCode(allowed) === normalized),
   );
 }
 
@@ -279,11 +314,22 @@ function getLineModifierLabel(line: CartLine, t: TranslateFn): string {
 }
 
 function getLocationZoneName(location: Location, t: TranslateFn): string {
-  return t(`location.${location.id}.zone`, location.zoneName);
+  const translationKey = ZONE_TRANSLATION_KEY_BY_VALUE[location.zoneName];
+  if (!translationKey) {
+    return location.zoneName;
+  }
+  return t(translationKey, location.zoneName);
 }
 
 function getLocationSpotLabel(location: Location, t: TranslateFn): string {
-  return t(`location.${location.id}.spot`, location.spotLabel);
+  for (const { pattern, key, fallback } of SPOT_TRANSLATION_PATTERNS) {
+    const match = pattern.exec(location.spotLabel);
+    if (!match) {
+      continue;
+    }
+    return t(key, fallback, { number: match[1] });
+  }
+  return location.spotLabel;
 }
 
 function getOptionsForGroup(groupId: string): ModifierOption[] {
