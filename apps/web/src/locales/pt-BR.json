@@ -4,6 +4,11 @@
   "ui.language.pt-BR": "Português (Brasil)",
   "ui.language.fr": "Francês",
   "ui.language.es": "Espanhol",
+  "ui.brand_name": "Itatiaia Resort & Eventos",
+  "ui.brand_tagline": "Pedidos na Piscina",
+  "ui.brand_logo_alt": "Logo do Itatiaia Resort & Eventos",
+  "ui.page_title": "Itatiaia Resort & Eventos",
+  "ui.meta_description": "Pedidos na área da piscina no Itatiaia Resort & Eventos. Escaneie o QR da mesa e peça bebidas e petiscos para sua espreguiçadeira.",
 
   "screen.start.title": "Comece seu pedido",
   "screen.start.subtitle": "Escaneie o QR da mesa com a câmera do celular.",

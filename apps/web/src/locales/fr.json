@@ -4,6 +4,11 @@
   "ui.language.pt-BR": "Portugais (Brésil)",
   "ui.language.fr": "Français",
   "ui.language.es": "Espagnol",
+  "ui.brand_name": "Itatiaia Resort & Eventos",
+  "ui.brand_tagline": "Commandes piscine",
+  "ui.brand_logo_alt": "Logo Itatiaia Resort & Eventos",
+  "ui.page_title": "Itatiaia Resort & Eventos",
+  "ui.meta_description": "Commande au bord de la piscine à Itatiaia Resort & Eventos. Scannez le QR de votre table et commandez boissons et snacks vers votre transat.",
 
   "screen.start.title": "Commencez votre commande",
   "screen.start.subtitle": "Scannez le QR de la table avec l'appareil photo de votre téléphone.",
@@ -87,7 +92,7 @@
   "order.confirm_line": "Merci de confirmer cette commande à la table.",
 
   "menu.categories.cat_cocktails.name": "Cocktails",
-  "menu.categories.cat_snacks.name": "Snacks",
+  "menu.categories.cat_snacks.name": "En-cas",
 
   "menu.items.item_mojito.name": "Mojito",
   "menu.items.item_mojito.description": "Menthe fraîche, citron vert, soda",

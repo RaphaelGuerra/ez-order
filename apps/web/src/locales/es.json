@@ -4,6 +4,11 @@
   "ui.language.pt-BR": "Portugués (Brasil)",
   "ui.language.fr": "Francés",
   "ui.language.es": "Español",
+  "ui.brand_name": "Itatiaia Resort & Eventos",
+  "ui.brand_tagline": "Pedidos en la Piscina",
+  "ui.brand_logo_alt": "Logo de Itatiaia Resort & Eventos",
+  "ui.page_title": "Itatiaia Resort & Eventos",
+  "ui.meta_description": "Pedidos en la zona de piscina de Itatiaia Resort & Eventos. Escanea el QR de tu mesa y pide bebidas y snacks a tu tumbona.",
 
   "screen.start.title": "Comienza tu pedido",
   "screen.start.subtitle": "Escanea el QR de la mesa con la cámara del celular.",
@@ -87,7 +92,7 @@
   "order.confirm_line": "Por favor confirma este pedido en la mesa.",
 
   "menu.categories.cat_cocktails.name": "Cócteles",
-  "menu.categories.cat_snacks.name": "Snacks",
+  "menu.categories.cat_snacks.name": "Aperitivos",
 
   "menu.items.item_mojito.name": "Mojito",
   "menu.items.item_mojito.description": "Menta fresca, lima, soda",

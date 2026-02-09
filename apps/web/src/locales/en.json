@@ -4,6 +4,11 @@
   "ui.language.pt-BR": "Portuguese (Brazil)",
   "ui.language.fr": "French",
   "ui.language.es": "Spanish",
+  "ui.brand_name": "Itatiaia Resort & Eventos",
+  "ui.brand_tagline": "Poolside Ordering",
+  "ui.brand_logo_alt": "Itatiaia Resort & Eventos logo",
+  "ui.page_title": "Itatiaia Resort & Eventos",
+  "ui.meta_description": "Poolside ordering at Itatiaia Resort & Eventos. Scan your table QR and order drinks & snacks to your lounger.",
 
   "screen.start.title": "Start your order",
   "screen.start.subtitle": "Scan the table QR with your phone camera app.",

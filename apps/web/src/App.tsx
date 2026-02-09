@@ -85,7 +85,7 @@ type I18nContextValue = {
 };
 
 const APP_CONFIG: AppConfig = configData;
-const FALLBACK_LOCALE: LocaleCode = "en";
+const FALLBACK_LOCALE: LocaleCode = "pt-BR";
 const SUPPORTED_LOCALES: LocaleCode[] = ["en", "pt-BR", "fr", "es"];
 const LOCALE_STORAGE_KEY = "ez-order:locale";
 
@@ -177,20 +177,6 @@ function detectInitialLocale(): LocaleCode {
   const storedLocale = normalizeLocale(localGet<string>(LOCALE_STORAGE_KEY));
   if (storedLocale) {
     return storedLocale;
-  }
-
-  if (typeof navigator !== "undefined") {
-    for (const candidate of navigator.languages ?? []) {
-      const resolved = normalizeLocale(candidate);
-      if (resolved) {
-        return resolved;
-      }
-    }
-
-    const browserLocale = normalizeLocale(navigator.language);
-    if (browserLocale) {
-      return browserLocale;
-    }
   }
 
   return FALLBACK_LOCALE;
@@ -402,6 +388,23 @@ function App() {
   const formatMoney = useMemo(() => (cents: number) => centsToMoney(cents, locale), [locale]);
   const formatDateTimeWithLocale = useMemo(() => (date: Date) => formatDateTime(date, locale), [locale]);
 
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    document.title = t("ui.page_title", "Itatiaia Resort & Eventos");
+
+    const description = t(
+      "ui.meta_description",
+      "Poolside ordering at Itatiaia Resort & Eventos. Scan your table QR and order drinks & snacks to your lounger.",
+    );
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", description);
+    }
+  }, [t]);
+
   const i18nValue = useMemo<I18nContextValue>(
     () => ({
       locale,
@@ -449,14 +452,17 @@ function LeafIcon(props: { size?: number; className?: string }) {
 
 function Screen(props: { title: string; subtitle?: string; children: ReactNode }) {
   const { locale, setLocale, t } = useI18n();
+  const brandName = t("ui.brand_name", "Itatiaia Resort & Eventos");
+  const brandTagline = t("ui.brand_tagline", "Poolside Ordering");
+  const brandLogoAlt = t("ui.brand_logo_alt", "Itatiaia Resort & Eventos logo");
 
   return (
     <main className="screen">
       <div className="brand-bar">
-        <img className="brand-logo" src="/logo.png" alt="Itatiaia Resort & Eventos" />
+        <img className="brand-logo" src="/logo.png" alt={brandLogoAlt} />
         <div className="brand-text">
-          <span className="brand-name">Itatiaia Resort & Eventos</span>
-          <span className="brand-tagline">Poolside Ordering</span>
+          <span className="brand-name">{brandName}</span>
+          <span className="brand-tagline">{brandTagline}</span>
         </div>
       </div>
       <header className="header">
