@@ -5,53 +5,521 @@
       "token": "pool-north-u42",
       "zoneName": "Pool North",
       "spotLabel": "Umbrella 42",
-      "manualCodes": ["42", "U42"]
+      "manualCodes": [
+        "42",
+        "U42"
+      ]
     },
     {
       "id": "loc_2",
       "token": "pool-east-c17",
       "zoneName": "Pool East",
       "spotLabel": "Cabana 17",
-      "manualCodes": ["17", "C17"]
+      "manualCodes": [
+        "17",
+        "C17"
+      ]
     }
   ],
   "menu": {
     "categories": [
-      { "id": "cat_cocktails", "name": "Cocktails", "sortOrder": 1 },
-      { "id": "cat_snacks", "name": "Snacks", "sortOrder": 2 }
+      {
+        "id": "cat_drinks",
+        "name": "Drinks",
+        "sortOrder": 1
+      },
+      {
+        "id": "cat_cocktails",
+        "name": "Cocktails",
+        "sortOrder": 2
+      },
+      {
+        "id": "cat_snacks",
+        "name": "Snacks",
+        "sortOrder": 3
+      },
+      {
+        "id": "cat_sandwiches",
+        "name": "Sandwiches",
+        "sortOrder": 4
+      },
+      {
+        "id": "cat_quick_bites",
+        "name": "Quick Bites",
+        "sortOrder": 5
+      }
     ],
     "modifierGroups": [
-      { "id": "mg_ice", "name": "Ice Level", "minSelect": 1, "maxSelect": 1, "required": true }
+      {
+        "id": "mg_ice",
+        "name": "Ice Level",
+        "minSelect": 1,
+        "maxSelect": 1,
+        "required": true
+      },
+      {
+        "id": "mg_meat_point",
+        "name": "Meat Doneness",
+        "minSelect": 1,
+        "maxSelect": 1,
+        "required": true
+      },
+      {
+        "id": "mg_sandwich_bread",
+        "name": "Bread Type",
+        "minSelect": 1,
+        "maxSelect": 1,
+        "required": true
+      },
+      {
+        "id": "mg_sauce",
+        "name": "Sauce",
+        "minSelect": 0,
+        "maxSelect": 1,
+        "required": false
+      },
+      {
+        "id": "mg_addons",
+        "name": "Add-ons",
+        "minSelect": 0,
+        "maxSelect": 3,
+        "required": false
+      },
+      {
+        "id": "mg_side",
+        "name": "Side",
+        "minSelect": 0,
+        "maxSelect": 1,
+        "required": false
+      }
     ],
     "modifierOptions": [
-      { "id": "opt_light_ice", "groupId": "mg_ice", "name": "Light ice", "priceDeltaCents": 0 },
-      { "id": "opt_regular_ice", "groupId": "mg_ice", "name": "Regular ice", "priceDeltaCents": 0 }
+      {
+        "id": "opt_no_ice",
+        "groupId": "mg_ice",
+        "name": "No ice",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_light_ice",
+        "groupId": "mg_ice",
+        "name": "Light ice",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_regular_ice",
+        "groupId": "mg_ice",
+        "name": "Regular ice",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_rare",
+        "groupId": "mg_meat_point",
+        "name": "Rare",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_medium",
+        "groupId": "mg_meat_point",
+        "name": "Medium",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_well_done",
+        "groupId": "mg_meat_point",
+        "name": "Well done",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_brioche",
+        "groupId": "mg_sandwich_bread",
+        "name": "Brioche bun",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_whole_grain",
+        "groupId": "mg_sandwich_bread",
+        "name": "Whole grain bread",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_baguette",
+        "groupId": "mg_sandwich_bread",
+        "name": "French baguette",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_mayo",
+        "groupId": "mg_sauce",
+        "name": "House mayo",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_ketchup",
+        "groupId": "mg_sauce",
+        "name": "Ketchup",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_mustard",
+        "groupId": "mg_sauce",
+        "name": "Mustard",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_bbq",
+        "groupId": "mg_sauce",
+        "name": "BBQ sauce",
+        "priceDeltaCents": 0
+      },
+      {
+        "id": "opt_extra_cheese",
+        "groupId": "mg_addons",
+        "name": "Extra cheese",
+        "priceDeltaCents": 300
+      },
+      {
+        "id": "opt_extra_bacon",
+        "groupId": "mg_addons",
+        "name": "Extra bacon",
+        "priceDeltaCents": 400
+      },
+      {
+        "id": "opt_fried_egg",
+        "groupId": "mg_addons",
+        "name": "Fried egg",
+        "priceDeltaCents": 250
+      },
+      {
+        "id": "opt_avocado",
+        "groupId": "mg_addons",
+        "name": "Avocado",
+        "priceDeltaCents": 350
+      },
+      {
+        "id": "opt_side_fries",
+        "groupId": "mg_side",
+        "name": "Fries",
+        "priceDeltaCents": 700
+      },
+      {
+        "id": "opt_side_salad",
+        "groupId": "mg_side",
+        "name": "Green salad",
+        "priceDeltaCents": 650
+      }
     ],
     "items": [
+      {
+        "id": "item_water_still",
+        "categoryId": "cat_drinks",
+        "name": "Still Water",
+        "description": "500ml bottle",
+        "basePriceCents": 600,
+        "available": true,
+        "modifierGroupIds": []
+      },
+      {
+        "id": "item_water_sparkling",
+        "categoryId": "cat_drinks",
+        "name": "Sparkling Water",
+        "description": "500ml bottle",
+        "basePriceCents": 700,
+        "available": true,
+        "modifierGroupIds": []
+      },
+      {
+        "id": "item_coke",
+        "categoryId": "cat_drinks",
+        "name": "Coca-Cola",
+        "description": "350ml can",
+        "basePriceCents": 900,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_coke_zero",
+        "categoryId": "cat_drinks",
+        "name": "Coca-Cola Zero",
+        "description": "350ml can",
+        "basePriceCents": 900,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_guarana",
+        "categoryId": "cat_drinks",
+        "name": "Guarana Soda",
+        "description": "350ml can",
+        "basePriceCents": 850,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_orange_juice",
+        "categoryId": "cat_drinks",
+        "name": "Orange Juice",
+        "description": "Freshly squeezed",
+        "basePriceCents": 1200,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_pineapple_mint_juice",
+        "categoryId": "cat_drinks",
+        "name": "Pineapple Mint Juice",
+        "description": "Fresh and refreshing",
+        "basePriceCents": 1300,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_energy_drink",
+        "categoryId": "cat_drinks",
+        "name": "Energy Drink",
+        "description": "250ml can",
+        "basePriceCents": 1600,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
       {
         "id": "item_mojito",
         "categoryId": "cat_cocktails",
         "name": "Mojito",
         "description": "Fresh mint, lime, soda",
-        "basePriceCents": 1400,
+        "basePriceCents": 1800,
         "available": true,
-        "modifierGroupIds": ["mg_ice"]
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
       },
       {
         "id": "item_caipirinha",
         "categoryId": "cat_cocktails",
         "name": "Caipirinha",
         "description": "Cachaca, lime, sugar",
-        "basePriceCents": 1450,
+        "basePriceCents": 1750,
         "available": true,
-        "modifierGroupIds": ["mg_ice"]
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_gin_tonic",
+        "categoryId": "cat_cocktails",
+        "name": "Gin Tonic",
+        "description": "Premium gin, tonic and citrus",
+        "basePriceCents": 1950,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_aperol_spritz",
+        "categoryId": "cat_cocktails",
+        "name": "Aperol Spritz",
+        "description": "Aperol, sparkling wine and soda",
+        "basePriceCents": 2100,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_pina_colada",
+        "categoryId": "cat_cocktails",
+        "name": "Pina Colada",
+        "description": "Rum, coconut and pineapple",
+        "basePriceCents": 2200,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_ice"
+        ]
+      },
+      {
+        "id": "item_fries",
+        "categoryId": "cat_snacks",
+        "name": "Fries",
+        "description": "Crispy potato portion",
+        "basePriceCents": 1600,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sauce"
+        ]
+      },
+      {
+        "id": "item_truffle_fries",
+        "categoryId": "cat_snacks",
+        "name": "Truffle Fries",
+        "description": "Parmesan and truffle touch",
+        "basePriceCents": 2200,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sauce"
+        ]
+      },
+      {
+        "id": "item_chicken_tenders",
+        "categoryId": "cat_snacks",
+        "name": "Crispy Chicken Tenders",
+        "description": "Breaded chicken strips",
+        "basePriceCents": 2400,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sauce"
+        ]
+      },
+      {
+        "id": "item_cheese_pastel",
+        "categoryId": "cat_snacks",
+        "name": "Cheese Pastel",
+        "description": "6-unit portion",
+        "basePriceCents": 1800,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sauce"
+        ]
+      },
+      {
+        "id": "item_shrimp_croquette",
+        "categoryId": "cat_snacks",
+        "name": "Shrimp Croquettes",
+        "description": "6-unit portion",
+        "basePriceCents": 2600,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sauce"
+        ]
       },
       {
         "id": "item_club_sandwich",
-        "categoryId": "cat_snacks",
+        "categoryId": "cat_sandwiches",
         "name": "Club Sandwich",
-        "description": "Chicken, bacon, lettuce",
-        "basePriceCents": 1800,
+        "description": "Grilled chicken, bacon and lettuce",
+        "basePriceCents": 2800,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ]
+      },
+      {
+        "id": "item_cheeseburger",
+        "categoryId": "cat_sandwiches",
+        "name": "Cheeseburger",
+        "description": "180g beef patty, cheese and salad",
+        "basePriceCents": 2900,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_meat_point",
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ]
+      },
+      {
+        "id": "item_chicken_sandwich",
+        "categoryId": "cat_sandwiches",
+        "name": "Grilled Chicken Sandwich",
+        "description": "Chicken breast, cheese and greens",
+        "basePriceCents": 2700,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ]
+      },
+      {
+        "id": "item_filet_mignon_sandwich",
+        "categoryId": "cat_sandwiches",
+        "name": "Filet Mignon Sandwich",
+        "description": "Filet, cheese and caramelized onions",
+        "basePriceCents": 3400,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_meat_point",
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ]
+      },
+      {
+        "id": "item_veggie_burger",
+        "categoryId": "cat_sandwiches",
+        "name": "Veggie Burger",
+        "description": "Chickpea patty and salad",
+        "basePriceCents": 2800,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sandwich_bread",
+          "mg_addons",
+          "mg_side"
+        ]
+      },
+      {
+        "id": "item_hot_mix",
+        "categoryId": "cat_quick_bites",
+        "name": "Hot Ham and Cheese",
+        "description": "Toasted sandwich",
+        "basePriceCents": 1700,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_addons"
+        ]
+      },
+      {
+        "id": "item_chicken_wrap",
+        "categoryId": "cat_quick_bites",
+        "name": "Chicken Wrap",
+        "description": "Chicken, lettuce and house sauce",
+        "basePriceCents": 2400,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_sauce",
+          "mg_addons"
+        ]
+      },
+      {
+        "id": "item_tapioca_cheese",
+        "categoryId": "cat_quick_bites",
+        "name": "Cheese Tapioca",
+        "description": "Light and gluten-free",
+        "basePriceCents": 1900,
+        "available": true,
+        "modifierGroupIds": [
+          "mg_addons"
+        ]
+      },
+      {
+        "id": "item_acai_bowl",
+        "categoryId": "cat_quick_bites",
+        "name": "Acai Bowl",
+        "description": "Acai with banana and granola",
+        "basePriceCents": 2300,
+        "available": true,
+        "modifierGroupIds": []
+      },
+      {
+        "id": "item_fruit_salad",
+        "categoryId": "cat_quick_bites",
+        "name": "Fruit Salad",
+        "description": "Seasonal fresh fruits",
+        "basePriceCents": 1600,
         "available": true,
         "modifierGroupIds": []
       }
