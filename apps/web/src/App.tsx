@@ -442,11 +442,40 @@ function App() {
   );
 }
 
+function LeafIcon(props: { size?: number; className?: string }) {
+  const s = props.size ?? 20;
+  return (
+    <svg width={s} height={s} viewBox="0 0 20 20" fill="none" className={props.className}>
+      <path
+        d="M6.5 17.5C4 15 3.5 11 5.2 7.2C7 3.8 10.5 2 14.5 2C14.2 6.2 12 10.2 8.5 13C7.2 14 6.5 15.8 6.5 17.5Z"
+        fill="currentColor"
+        fillOpacity={0.9}
+      />
+      <path
+        d="M6.8 16.5C9 11 11.5 7 14.5 2"
+        stroke="currentColor"
+        strokeWidth={0.8}
+        strokeOpacity={0.4}
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function Screen(props: { title: string; subtitle?: string; children: ReactNode }) {
   const { locale, setLocale, t } = useI18n();
 
   return (
     <main className="screen">
+      <div className="brand-bar">
+        <div className="brand-mark">
+          <LeafIcon size={20} />
+        </div>
+        <div className="brand-text">
+          <span className="brand-name">Itatiaia Eco Resort</span>
+          <span className="brand-tagline">Poolside Ordering</span>
+        </div>
+      </div>
       <header className="header">
         <div className="header-top">
           <h1>{props.title}</h1>
@@ -510,6 +539,10 @@ function GuestStartPage() {
           )}
         </p>
       </section>
+
+      <div className="leaf-ornament" aria-hidden="true">
+        <LeafIcon size={22} />
+      </div>
 
       <section className="panel">
         <h2>{t("screen.start.manual_title", "Manual fallback")}</h2>
@@ -773,6 +806,7 @@ function GuestMenuPage() {
             aria-label={t("aria.item_customization", "Item customization")}
             onClick={(event) => event.stopPropagation()}
           >
+            <div className="modal-handle" aria-hidden="true" />
             <button
               className="modal-close"
               onClick={() => setConfig(null)}
@@ -1082,6 +1116,13 @@ function GuestSentPage() {
       subtitle={t("screen.sent.subtitle", "Finish sending in WhatsApp.")}
     >
       <section className="panel">
+        <div className="success-icon" aria-hidden="true">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <circle cx="28" cy="28" r="26" stroke="currentColor" strokeWidth="2" opacity="0.15" />
+            <circle cx="28" cy="28" r="26" stroke="currentColor" strokeWidth="2" className="success-circle" />
+            <path d="M18 28l7 7 13-13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="success-check" />
+          </svg>
+        </div>
         <p>
           {t("label.table", "Table")}: <strong>{location.spotLabel}</strong>
         </p>
