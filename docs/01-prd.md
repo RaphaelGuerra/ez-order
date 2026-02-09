@@ -1,17 +1,18 @@
-# EZ-Order Client-Only PRD (WhatsApp Alert)
+# EZ-Order PRD (Push Notification Mode)
 
 ## 1. Problem Statement
-Pool guests wait too long to place orders because the bar is far and waiter capture is manual. The app should remove the first friction step: getting the waiter’s attention with a structured order request.
+Pool guests wait too long to place orders because the bar is far and waiter capture is manual. The app should remove the first friction step: getting the waiter's attention with a structured order request.
 
 ## 2. Product Goal
-Enable guests to place a quick order request in under 60 seconds from their phone browser, then notify waiter operations through WhatsApp.
+Enable guests to place a quick order request in under 60 seconds from their phone browser, then notify waiter operations through a Pushover push notification.
 
 ## 3. Scope
-- Guest-facing web app only (no backend server required).
+- Guest-facing web app (React + Vite).
+- Cloudflare Pages Function sends push notifications to waiter device(s) via Pushover.
 - Table/spot context via QR deep link or manual table code input.
 - Menu browsing and cart.
 - Notes/allergy notes.
-- WhatsApp prefilled message sent to a configured waiter number.
+- Emergency-priority notification (repeats until acknowledged).
 - Multilingual UX: English, Portuguese (Brazil), French, Spanish.
 
 ## 4. Out of Scope
@@ -24,39 +25,40 @@ Enable guests to place a quick order request in under 60 seconds from their phon
 | Persona | Need | Success |
 |---|---|---|
 | Guest | Order without waiting for a waiter to arrive | Can send a request quickly and clearly |
-| Waiter | Be alerted with enough detail to take over manually | Receives readable WhatsApp request with table, items, and notes |
-| Operator/Admin | Keep setup simple and reliable | Can configure menu, table mapping, and waiter number with low effort |
+| Waiter | Be alerted with enough detail to take over manually | Receives readable push notification with table, items, and notes |
+| Operator/Admin | Keep setup simple and reliable | Can configure menu, table mapping, and Pushover credentials with low effort |
 
 ## 6. Primary Flow
 1. Guest scans table QR (preferred) or opens page and enters table code.
 2. Guest confirms detected location.
 3. Guest browses menu and adds items/modifiers.
 4. Guest reviews cart, optional notes/allergy notes.
-5. Guest taps send.
-6. App opens WhatsApp with prefilled message to waiter number.
-7. Guest taps "I sent it" to clear cart and finish.
+5. Guest taps **Send order**.
+6. App sends notification to waiter device via server-side Pushover call.
+7. Cart is cleared automatically and guest sees confirmation.
 
 ## 7. Edge Cases
 - Invalid table code or QR token.
 - Empty cart on send attempt.
-- Missing/invalid waiter WhatsApp number.
-- User reopens sent page (notes/allergy text is not persisted by design).
-- Weak connectivity opening WhatsApp URL.
+- Network failure or server error when sending notification.
+- Weak connectivity (retry guidance shown to guest).
 
 ## 8. Success Metrics
 - P50 time-to-send request <= 60s.
-- Cart-to-WhatsApp send completion rate.
+- Cart-to-notification send completion rate.
 - Invalid table entry rate.
-- Send failures due to config issues (invalid waiter number).
+- Send failure rate (network/server errors).
 
 ## 9. Operating Model
-- Waiter receives request in WhatsApp and handles fulfillment manually.
+- Waiter receives push notification and handles fulfillment manually.
+- Emergency priority ensures the notification repeats every 30 seconds until acknowledged.
 - Final service workflow remains human/manual outside the app.
 - Menu and location updates are managed via static config file changes.
 
 ## 10. Configuration Sources
 - Guest/menu/locations/pricing: `apps/web/src/config/order-config.json`
-- Waiter number + currency: `apps/web/.env`
+- Display currency: `apps/web/.env` (`VITE_DISPLAY_CURRENCY`)
+- Pushover credentials: Cloudflare Pages dashboard environment variables (`PUSHOVER_APP_TOKEN`, `PUSHOVER_USER_KEY`)
 - UI translations:
   - `apps/web/src/locales/en.json`
   - `apps/web/src/locales/pt-BR.json`

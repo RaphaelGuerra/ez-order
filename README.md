@@ -1,21 +1,20 @@
-# EZ-Order (WhatsApp Alert Mode)
+# EZ-Order (Push Notification Mode)
 
-Mobile-first, client-only QR ordering flow where the waiter is alerted via WhatsApp.
+Mobile-first QR ordering flow where the waiter is alerted via Pushover push notifications.
 
 ## How It Works
 1. Guest scans QR on table (opens `/g/:locationToken`) or enters table number on `/`.
 2. Guest browses menu and builds cart.
-3. Guest taps **Send to waiter on WhatsApp**.
-4. A prefilled WhatsApp message opens to the waiter device number.
-5. Guest confirms with **I sent it** in the app, then cart is cleared.
-6. Waiter takes over manually from WhatsApp alert.
-
-No backend server is required in this mode.
+3. Guest taps **Send order**.
+4. A Cloudflare Pages Function sends an emergency push notification to the waiter's device via Pushover (repeats every 30 s until acknowledged).
+5. Cart is cleared automatically on success, and the guest sees a confirmation screen.
+6. Waiter acknowledges the notification and attends the table.
 
 ## Workspace Layout
-- `apps/web`: React + Vite guest app (QR/manual table -> menu -> cart -> WhatsApp alert).
+- `apps/web`: React + Vite guest app (QR/manual table -> menu -> cart -> push notification).
 - `apps/web/src/config/order-config.json`: single source of truth for locations, table codes, menu, and pricing.
-- `docs/01-prd.md`: product requirements for client-only WhatsApp mode.
+- `functions/api/notify.ts`: Cloudflare Pages Function that calls the Pushover API.
+- `docs/01-prd.md`: product requirements.
 - `docs/02-ui-spec.md`: UI/routes/state spec for the implemented guest flow.
 
 ## Quick Start
@@ -23,13 +22,19 @@ No backend server is required in this mode.
    ```bash
    npm install
    ```
-2. Configure waiter number:
+2. Configure:
    - Copy `apps/web/.env.example` to `apps/web/.env`
-   - Set `VITE_WAITER_WHATSAPP_NUMBER` to waiter device number (international format, digits only)
    - Optional: set `VITE_DISPLAY_CURRENCY` (ISO-4217 like `USD`, `BRL`, `EUR`)
+   - Set Pushover secrets in Cloudflare Pages dashboard (Settings -> Environment variables):
+     - `PUSHOVER_APP_TOKEN` — your Pushover application token
+     - `PUSHOVER_USER_KEY` — user key or delivery group key for the waiter device(s)
 3. Start app:
    ```bash
    npm run dev
+   ```
+   For local end-to-end testing with the notify function, also run:
+   ```bash
+   npx wrangler pages dev apps/web/dist
    ```
 4. Open:
    - Web: `http://localhost:5173`
@@ -43,8 +48,8 @@ npm run build
 - `/` manual table number fallback
 - `/g/:locationToken` location confirmation
 - `/g/:locationToken/menu` menu
-- `/g/:locationToken/cart` cart + WhatsApp trigger
-- `/g/:locationToken/sent` post-trigger confirmation
+- `/g/:locationToken/cart` cart + send order
+- `/g/:locationToken/sent` order confirmation
 
 ## Seeded Table Setup
 ### QR Tokens
@@ -56,10 +61,10 @@ npm run build
 - `17`
 
 ## Notes
-- Browser cannot send WhatsApp silently. The guest must confirm/send inside WhatsApp.
-- The cart is only cleared after guest taps **I sent it**.
-- Allergy/notes text is not persisted in local storage for privacy.
-- If WhatsApp number is missing/invalid, send is blocked with a config error.
+- Order is sent server-side via Pushover — no manual step required from the guest.
+- The cart is cleared automatically when the notification is confirmed sent.
+- Allergy/notes text is included in the push notification message but not persisted locally.
+- Pushover credentials are server-side only (never exposed to the browser).
 - Multilingual guest UI is built in (`English`, `Português (Brasil)`, `Français`, `Español`).
 - Language auto-detects from browser and can be changed from the top selector on each screen.
 - Translation dictionaries live at:

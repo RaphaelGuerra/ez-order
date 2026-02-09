@@ -59,8 +59,6 @@ type ConfigState = {
 };
 
 type SentPageState = {
-  notes?: string;
-  allergyNotes?: string;
   sentAtIso?: string;
 };
 
@@ -105,7 +103,6 @@ const LOCALES: Record<LocaleCode, LocaleDictionary> = {
   es: esLocale,
 };
 
-const WAITER_WHATSAPP_NUMBER = (import.meta.env.VITE_WAITER_WHATSAPP_NUMBER ?? "").replace(/\D/g, "");
 const RAW_DISPLAY_CURRENCY = (import.meta.env.VITE_DISPLAY_CURRENCY ?? "USD").trim().toUpperCase();
 const DISPLAY_CURRENCY = /^[A-Z]{3}$/.test(RAW_DISPLAY_CURRENCY) ? RAW_DISPLAY_CURRENCY : "USD";
 
@@ -306,7 +303,7 @@ function flattenSelectedOptionsByGroup(selectedOptionsByGroup: Record<string, st
   return Object.values(selectedOptionsByGroup).flat();
 }
 
-function buildWhatsAppMessage(input: {
+function buildOrderMessage(input: {
   t: TranslateFn;
   formatMoney: (cents: number) => string;
   formatDateTime: (date: Date) => string;
@@ -322,64 +319,52 @@ function buildWhatsAppMessage(input: {
       const modifierLabel = getLineModifierLabel(line, input.t);
       const modifierText = modifierLabel ? ` (${modifierLabel})` : "";
       const noteText = line.notes?.trim()
-        ? input.t("wa.item_note_suffix", " | note: {value}", { value: line.notes.trim() })
+        ? input.t("order.item_note_suffix", " | note: {value}", { value: line.notes.trim() })
         : "";
       return `- ${line.quantity}x ${itemName}${modifierText}${noteText}`;
     })
     .join("\n");
 
   const parts: string[] = [
-    input.t("wa.header", "New Guest Order Request"),
-    input.t("wa.table_line", "Table: {value}", { value: input.location.spotLabel }),
-    input.t("wa.zone_line", "Zone: {value}", { value: input.location.zoneName }),
-    input.t("wa.code_line", "Code: {value}", {
+    input.t("order.header", "New Guest Order Request"),
+    input.t("order.table_line", "Table: {value}", { value: input.location.spotLabel }),
+    input.t("order.zone_line", "Zone: {value}", { value: input.location.zoneName }),
+    input.t("order.code_line", "Code: {value}", {
       value: input.location.manualCodes[0] ?? input.location.token,
     }),
-    input.t("wa.time_line", "Time: {value}", { value: input.formatDateTime(new Date()) }),
+    input.t("order.time_line", "Time: {value}", { value: input.formatDateTime(new Date()) }),
     "",
-    input.t("wa.items_header", "Items:"),
-    lineRows || input.t("wa.no_items", "- No items"),
+    input.t("order.items_header", "Items:"),
+    lineRows || input.t("order.no_items", "- No items"),
     "",
-    input.t("wa.subtotal_line", "Subtotal: {value}", {
+    input.t("order.subtotal_line", "Subtotal: {value}", {
       value: input.formatMoney(input.totals.subtotalCents),
     }),
-    input.t("wa.tax_line", "Tax: {value}", {
+    input.t("order.tax_line", "Tax: {value}", {
       value: input.formatMoney(input.totals.taxCents),
     }),
-    input.t("wa.service_fee_line", "Service fee: {value}", {
+    input.t("order.service_fee_line", "Service fee: {value}", {
       value: input.formatMoney(input.totals.serviceFeeCents),
     }),
-    input.t("wa.total_line", "Total estimate: {value}", {
+    input.t("order.total_line", "Total estimate: {value}", {
       value: input.formatMoney(input.totals.totalCents),
     }),
   ];
 
   if (input.notes.trim()) {
-    parts.push("", input.t("wa.order_notes_line", "Order notes: {value}", { value: input.notes.trim() }));
+    parts.push("", input.t("order.order_notes_line", "Order notes: {value}", { value: input.notes.trim() }));
   }
 
   if (input.allergyNotes.trim()) {
     parts.push(
       "",
-      input.t("wa.allergy_notes_line", "Allergy notes: {value}", { value: input.allergyNotes.trim() }),
+      input.t("order.allergy_notes_line", "Allergy notes: {value}", { value: input.allergyNotes.trim() }),
     );
   }
 
-  parts.push("", input.t("wa.confirm_line", "Please confirm this order at the table."));
+  parts.push("", input.t("order.confirm_line", "Please confirm this order at the table."));
 
   return parts.join("\n");
-}
-
-function openWhatsApp(number: string, message: string) {
-  const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
-  const popup = window.open(url, "_blank", "noopener,noreferrer");
-  if (!popup) {
-    window.location.href = url;
-  }
-}
-
-function isValidWhatsAppNumber(value: string): boolean {
-  return /^[1-9]\d{7,14}$/.test(value);
 }
 
 function useI18n(): I18nContextValue {
@@ -928,7 +913,8 @@ function GuestCartPage() {
   const [lines, setLines] = useState<CartLine[]>(() => localGet<CartLine[]>(cartKey(locationToken)) ?? []);
   const [notes, setNotes] = useState("");
   const [allergyNotes, setAllergyNotes] = useState("");
-  const [errorKey, setErrorKey] = useState<"cart_empty" | "wa_invalid" | null>(null);
+  const [errorKey, setErrorKey] = useState<"cart_empty" | "send_failed" | null>(null);
+  const [sending, setSending] = useState(false);
 
   if (!location) {
     return <Navigate to="/" replace />;
@@ -942,7 +928,7 @@ function GuestCartPage() {
     localSet(cartKey(locationToken), nextLines);
   };
 
-  const sendToWhatsApp = () => {
+  const sendOrder = async () => {
     setErrorKey(null);
 
     if (lines.length === 0) {
@@ -950,12 +936,7 @@ function GuestCartPage() {
       return;
     }
 
-    if (!isValidWhatsAppNumber(WAITER_WHATSAPP_NUMBER)) {
-      setErrorKey("wa_invalid");
-      return;
-    }
-
-    const message = buildWhatsAppMessage({
+    const message = buildOrderMessage({
       t,
       formatMoney,
       formatDateTime,
@@ -966,28 +947,45 @@ function GuestCartPage() {
       totals,
     });
 
-    openWhatsApp(WAITER_WHATSAPP_NUMBER, message);
+    const title = t("order.push_title", "New order: {spot}", { spot: location.spotLabel });
 
-    navigate(`/g/${locationToken}/sent`, {
-      state: {
-        notes,
-        allergyNotes,
-        sentAtIso: new Date().toISOString(),
-      } satisfies SentPageState,
-    });
+    setSending(true);
+    try {
+      const res = await fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, message }),
+      });
+
+      if (!res.ok) {
+        setErrorKey("send_failed");
+        return;
+      }
+
+      localStorage.removeItem(cartKey(locationToken));
+      navigate(`/g/${locationToken}/sent`, {
+        state: {
+          sentAtIso: new Date().toISOString(),
+        } satisfies SentPageState,
+      });
+    } catch {
+      setErrorKey("send_failed");
+    } finally {
+      setSending(false);
+    }
   };
 
   const errorText =
     errorKey === "cart_empty"
       ? t("error.cart_empty", "Your cart is empty.")
-      : errorKey === "wa_invalid"
-        ? t("error.whatsapp_invalid", "Waiter WhatsApp number is missing or invalid.")
+      : errorKey === "send_failed"
+        ? t("error.send_failed", "Could not send your order. Please try again.")
         : null;
 
   return (
     <Screen
       title={t("screen.cart.title", "Your cart")}
-      subtitle={t("screen.cart.subtitle", "Review before alerting waiter on WhatsApp.")}
+      subtitle={t("screen.cart.subtitle", "Review your order before sending.")}
     >
       <section className="panel">
         {lines.length === 0 ? <p>{t("screen.cart.empty", "Your cart is empty.")}</p> : null}
@@ -1053,121 +1051,65 @@ function GuestCartPage() {
 
         {errorText ? <p className="error">{errorText}</p> : null}
 
-        <div className="button-row">
-          <button className="button" onClick={sendToWhatsApp} disabled={lines.length === 0}>
-            {t("action.send_whatsapp", "Send to waiter on WhatsApp")}
-          </button>
-          <button className="button button-secondary" onClick={() => navigate(`/g/${locationToken}/menu`)}>
-            {t("action.back_menu", "Back to menu")}
-          </button>
-        </div>
+        <button
+          className={`button button-place-order${sending ? " button-loading" : ""}`}
+          onClick={sendOrder}
+          disabled={lines.length === 0 || sending}
+        >
+          {sending ? t("action.sending", "Sending...") : t("action.send_order", "Send order")}
+        </button>
+        <button className="button button-secondary" onClick={() => navigate(`/g/${locationToken}/menu`)}>
+          {t("action.back_menu", "Back to menu")}
+        </button>
       </section>
     </Screen>
   );
 }
 
 function GuestSentPage() {
-  const { t, formatMoney, formatDateTime } = useI18n();
+  const { t, formatDateTime } = useI18n();
   const { locationToken = "" } = useParams();
   const navigate = useNavigate();
   const routerLocation = useLocation();
   const sentState = (routerLocation.state as SentPageState | null) ?? null;
 
   const location = findLocationByToken(locationToken);
-  const lines = localGet<CartLine[]>(cartKey(locationToken)) ?? [];
 
   if (!location) {
     return <Navigate to="/" replace />;
   }
 
-  const totals = calculateTotals(lines);
-  const message =
-    lines.length > 0
-      ? buildWhatsAppMessage({
-          t,
-          formatMoney,
-          formatDateTime,
-          location,
-          lines,
-          notes: sentState?.notes ?? "",
-          allergyNotes: sentState?.allergyNotes ?? "",
-          totals,
-        })
-      : "";
-
-  const openAgain = () => {
-    if (!message) {
-      return;
-    }
-    if (!isValidWhatsAppNumber(WAITER_WHATSAPP_NUMBER)) {
-      return;
-    }
-    openWhatsApp(WAITER_WHATSAPP_NUMBER, message);
-  };
-
-  const confirmSent = () => {
-    localStorage.removeItem(cartKey(locationToken));
-    navigate("/");
-  };
+  const sentAt = sentState?.sentAtIso ? new Date(sentState.sentAtIso) : null;
 
   return (
     <Screen
-      title={t("screen.sent.title", "Request ready")}
-      subtitle={t("screen.sent.subtitle", "Finish sending in WhatsApp.")}
+      title={t("screen.sent.title", "Order sent!")}
+      subtitle={t("screen.sent.subtitle", "Your order has been sent to the waiter.")}
     >
-      <section className="panel">
+      <section className="panel sent-confirmation">
         <div className="success-icon" aria-hidden="true">
-          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <svg width="64" height="64" viewBox="0 0 56 56" fill="none">
             <circle cx="28" cy="28" r="26" stroke="currentColor" strokeWidth="2" opacity="0.15" />
             <circle cx="28" cy="28" r="26" stroke="currentColor" strokeWidth="2" className="success-circle" />
             <path d="M18 28l7 7 13-13" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="success-check" />
           </svg>
         </div>
-        <p>
+        <p className="sent-table">
           {t("label.table", "Table")}: <strong>{location.spotLabel}</strong>
         </p>
-        <p className="subtle">{t("screen.sent.instructions", "WhatsApp opened with your order message. After sending it there, tap I sent it here.")}</p>
-
-        {!sentState ? (
-          <p className="warning">
-            {t(
-              "screen.sent.reopened_warning",
-              "This page was reopened. Notes/allergy text is not persisted for privacy.",
-            )}
+        {sentAt ? (
+          <p className="subtle">
+            {t("screen.sent.sent_at", "Sent at {time}", { time: formatDateTime(sentAt) })}
           </p>
         ) : null}
+        <p className="sent-instructions">{t("screen.sent.instructions", "The waiter has been notified and will attend to your table shortly.")}</p>
 
-        {lines.length > 0 ? (
-          <>
-            <label className="field">
-              {t("field.message_preview", "Message preview")}
-              <textarea readOnly value={message} rows={8} />
-            </label>
-            <p className="total-row">
-              <span>{t("label.total_estimate", "Total estimate")}</span>
-              <span>{formatMoney(totals.totalCents)}</span>
-            </p>
-          </>
-        ) : (
-          <p className="warning">{t("screen.sent.empty_warning", "Cart is empty. Add items before sending another alert.")}</p>
-        )}
-
-        <div className="button-row">
-          <button
-            className="button"
-            onClick={openAgain}
-            disabled={!message || !isValidWhatsAppNumber(WAITER_WHATSAPP_NUMBER)}
-          >
-            {t("action.open_whatsapp_again", "Open WhatsApp again")}
+        <div className="sent-actions">
+          <button className="button button-accent" onClick={() => navigate("/")}>
+            {t("action.done", "Done")}
           </button>
-          <button className="button" onClick={confirmSent} disabled={lines.length === 0}>
-            {t("action.i_sent_it", "I sent it")}
-          </button>
-          <button
-            className="button button-secondary"
-            onClick={() => navigate(`/g/${locationToken}/cart`, { state: sentState })}
-          >
-            {t("action.back_cart", "Back to cart")}
+          <button className="button button-secondary" onClick={() => navigate(`/g/${locationToken}/menu`)}>
+            {t("action.order_more", "Order more")}
           </button>
         </div>
       </section>

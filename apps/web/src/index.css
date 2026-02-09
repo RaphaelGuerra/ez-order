@@ -760,10 +760,16 @@ h3 {
   font-size: 1rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-accent);
+  margin-top: 8px;
 }
 
 .button-place-order:hover {
   box-shadow: 0 6px 24px rgba(196, 154, 60, 0.25);
+}
+
+.button-place-order + .button-secondary {
+  margin-top: 10px;
+  width: 100%;
 }
 
 /* --- 13. Forms & Inputs --- */
@@ -1007,7 +1013,50 @@ textarea {
   }
 }
 
-/* --- 21. Reduced Motion --- */
+/* --- 21. Sent Confirmation --- */
+.sent-confirmation {
+  text-align: center;
+  padding: 32px 22px 28px;
+}
+
+.sent-confirmation .success-icon {
+  margin: 8px 0 20px;
+}
+
+.sent-table {
+  font-size: 1.1rem;
+  margin: 0 0 6px;
+}
+
+.sent-table strong {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.25rem;
+}
+
+.sent-instructions {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 16px 0 4px;
+}
+
+.sent-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.sent-actions .button {
+  width: 100%;
+}
+
+.sent-actions .button-secondary {
+  min-height: 44px;
+}
+
+/* --- 22. Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
