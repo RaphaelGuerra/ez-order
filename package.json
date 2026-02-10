@@ -6,7 +6,8 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run -w @ez-order/web build",
+    "build": "npm run catalog:validate && npm run catalog:sync && npm run -w @ez-order/web build",
+    "catalog:sync": "node scripts/sync-catalog-fallback.mjs",
     "catalog:validate": "node scripts/validate-catalog.mjs",
     "dev": "npm run -w @ez-order/web dev",
     "dev:web": "npm run -w @ez-order/web dev",

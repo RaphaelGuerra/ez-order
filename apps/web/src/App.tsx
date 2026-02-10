@@ -157,6 +157,45 @@ function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function isCatalogTextMap(value: unknown): value is CatalogTextByLocale {
+  if (value === undefined) {
+    return true;
+  }
+
+  if (!isObjectRecord(value)) {
+    return false;
+  }
+
+  for (const [locale, text] of Object.entries(value)) {
+    if (!SUPPORTED_LOCALES.includes(locale as LocaleCode)) {
+      return false;
+    }
+
+    if (!isNonEmptyString(text)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function isHttpUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 export function isValidAppConfig(value: unknown): value is AppConfig {
   if (!isObjectRecord(value)) {
@@ -180,7 +219,221 @@ export function isValidAppConfig(value: unknown): value is AppConfig {
     return false;
   }
 
-  return typeof pricing.taxRate === "number" && typeof pricing.serviceFeeRate === "number";
+  if (
+    !isFiniteNumber(pricing.taxRate) ||
+    !isFiniteNumber(pricing.serviceFeeRate) ||
+    pricing.taxRate < 0 ||
+    pricing.serviceFeeRate < 0 ||
+    pricing.taxRate > 1 ||
+    pricing.serviceFeeRate > 1
+  ) {
+    return false;
+  }
+
+  const locationIds = new Set<string>();
+  const locationTokens = new Set<string>();
+  const normalizedManualCodes = new Set<string>();
+
+  for (const location of locations) {
+    if (!isObjectRecord(location)) {
+      return false;
+    }
+
+    if (
+      !isNonEmptyString(location.id) ||
+      !isNonEmptyString(location.token) ||
+      !isNonEmptyString(location.zoneName) ||
+      !isNonEmptyString(location.spotLabel)
+    ) {
+      return false;
+    }
+
+    if (locationIds.has(location.id) || locationTokens.has(location.token)) {
+      return false;
+    }
+    locationIds.add(location.id);
+    locationTokens.add(location.token);
+
+    if (!isCatalogTextMap(location.zoneNameI18n) || !isCatalogTextMap(location.spotLabelI18n)) {
+      return false;
+    }
+
+    if (!Array.isArray(location.manualCodes) || location.manualCodes.length === 0) {
+      return false;
+    }
+
+    for (const manualCode of location.manualCodes) {
+      if (!isNonEmptyString(manualCode)) {
+        return false;
+      }
+
+      const normalizedCode = normalizeManualCode(manualCode);
+      if (normalizedManualCodes.has(normalizedCode)) {
+        return false;
+      }
+      normalizedManualCodes.add(normalizedCode);
+    }
+  }
+
+  const categoryIds = new Set<string>();
+  for (const category of menu.categories) {
+    if (!isObjectRecord(category)) {
+      return false;
+    }
+
+    if (
+      !isNonEmptyString(category.id) ||
+      categoryIds.has(category.id) ||
+      !isFiniteNumber(category.sortOrder) ||
+      !isNonEmptyString(category.name) ||
+      !isCatalogTextMap(category.nameI18n)
+    ) {
+      return false;
+    }
+
+    categoryIds.add(category.id);
+  }
+
+  const groupIds = new Set<string>();
+  const selectionBoundsByGroup = new Map<string, { min: number; max: number }>();
+  for (const group of menu.modifierGroups) {
+    if (!isObjectRecord(group)) {
+      return false;
+    }
+
+    if (
+      !isNonEmptyString(group.id) ||
+      groupIds.has(group.id) ||
+      !isNonEmptyString(group.name) ||
+      !isCatalogTextMap(group.nameI18n)
+    ) {
+      return false;
+    }
+
+    if (!isFiniteNumber(group.minSelect) || !isFiniteNumber(group.maxSelect)) {
+      return false;
+    }
+
+    if (
+      !Number.isInteger(group.minSelect) ||
+      !Number.isInteger(group.maxSelect) ||
+      group.minSelect < 0 ||
+      group.maxSelect < 0 ||
+      group.maxSelect < group.minSelect
+    ) {
+      return false;
+    }
+
+    const min = group.minSelect;
+    const max = group.maxSelect;
+
+    if (typeof group.required !== "boolean") {
+      return false;
+    }
+
+    groupIds.add(group.id);
+    selectionBoundsByGroup.set(group.id, { min, max });
+  }
+
+  const optionIds = new Set<string>();
+  const optionCountByGroup = new Map<string, number>();
+  const includedOptionCountByGroup = new Map<string, number>();
+
+  for (const option of menu.modifierOptions) {
+    if (!isObjectRecord(option)) {
+      return false;
+    }
+
+    if (
+      !isNonEmptyString(option.id) ||
+      optionIds.has(option.id) ||
+      !isNonEmptyString(option.groupId) ||
+      !groupIds.has(option.groupId) ||
+      !isNonEmptyString(option.name) ||
+      !isFiniteNumber(option.priceDeltaCents) ||
+      !isCatalogTextMap(option.nameI18n)
+    ) {
+      return false;
+    }
+
+    optionIds.add(option.id);
+    optionCountByGroup.set(option.groupId, (optionCountByGroup.get(option.groupId) ?? 0) + 1);
+    if (option.priceDeltaCents <= 0) {
+      includedOptionCountByGroup.set(
+        option.groupId,
+        (includedOptionCountByGroup.get(option.groupId) ?? 0) + 1,
+      );
+    }
+  }
+
+  for (const groupId of groupIds) {
+    const optionCount = optionCountByGroup.get(groupId) ?? 0;
+    if (optionCount === 0) {
+      return false;
+    }
+
+    const bounds = selectionBoundsByGroup.get(groupId);
+    if (!bounds) {
+      return false;
+    }
+
+    if (bounds.max > optionCount) {
+      return false;
+    }
+
+    const includedCount = includedOptionCountByGroup.get(groupId) ?? 0;
+    if (bounds.min > includedCount) {
+      return false;
+    }
+  }
+
+  const itemIds = new Set<string>();
+  for (const item of menu.items) {
+    if (!isObjectRecord(item)) {
+      return false;
+    }
+
+    if (
+      !isNonEmptyString(item.id) ||
+      itemIds.has(item.id) ||
+      !isNonEmptyString(item.categoryId) ||
+      !categoryIds.has(item.categoryId) ||
+      !isNonEmptyString(item.name) ||
+      !isFiniteNumber(item.basePriceCents) ||
+      item.basePriceCents < 0 ||
+      typeof item.available !== "boolean" ||
+      !isCatalogTextMap(item.nameI18n) ||
+      !isCatalogTextMap(item.descriptionI18n)
+    ) {
+      return false;
+    }
+
+    if (item.description !== undefined && typeof item.description !== "string") {
+      return false;
+    }
+
+    if (item.imageUrl !== undefined) {
+      if (!isNonEmptyString(item.imageUrl) || !isHttpUrl(item.imageUrl.trim())) {
+        return false;
+      }
+    }
+
+    if (!Array.isArray(item.modifierGroupIds)) {
+      return false;
+    }
+
+    const itemGroupIds = new Set<string>();
+    for (const groupId of item.modifierGroupIds) {
+      if (!isNonEmptyString(groupId) || !groupIds.has(groupId) || itemGroupIds.has(groupId)) {
+        return false;
+      }
+      itemGroupIds.add(groupId);
+    }
+
+    itemIds.add(item.id);
+  }
+
+  return true;
 }
 
 function rebuildConfigIndexes(config: AppConfig): void {
@@ -229,14 +482,20 @@ export function setRuntimeConfig(nextConfig: AppConfig): void {
 
   APP_CONFIG = nextConfig;
   rebuildConfigIndexes(nextConfig);
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(RUNTIME_CONFIG_UPDATED_EVENT));
+  }
 }
 
 rebuildConfigIndexes(APP_CONFIG);
 
 const CART_PREFIX = "ez-order:cart:";
+export const RUNTIME_CONFIG_UPDATED_EVENT = "ez-order:config-updated";
 const I18nContext = createContext<I18nContextValue | null>(null);
 const MAX_FREE_TEXT_LENGTH = 280;
 const NOTIFY_REQUEST_TIMEOUT_MS = 12_000;
+const WAITER_NOTIFICATION_LOCALE: LocaleCode = "pt-BR";
 const ZONE_TRANSLATION_KEY_BY_VALUE: Record<string, string> = {
   "Pool North": "location.zone.pool_north",
   "Pool East": "location.zone.pool_east",
@@ -871,6 +1130,22 @@ function GuestCartRoute() {
 
 function App() {
   const [locale, setLocale] = useState<LocaleCode>(() => detectInitialLocale());
+  const [, bumpConfigRevision] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleRuntimeConfigUpdated = () => {
+      bumpConfigRevision((current) => current + 1);
+    };
+
+    window.addEventListener(RUNTIME_CONFIG_UPDATED_EVENT, handleRuntimeConfigUpdated);
+    return () => {
+      window.removeEventListener(RUNTIME_CONFIG_UPDATED_EVENT, handleRuntimeConfigUpdated);
+    };
+  }, []);
 
   useEffect(() => {
     localSet(LOCALE_STORAGE_KEY, locale);
@@ -1181,6 +1456,9 @@ function GuestMenuPage() {
   const categoryTabsRef = useRef<HTMLElement | null>(null);
   const [canScrollCategoriesLeft, setCanScrollCategoriesLeft] = useState(false);
   const [canScrollCategoriesRight, setCanScrollCategoriesRight] = useState(false);
+  const categories = MENU_CATEGORIES;
+  const resolvedActiveCategoryId =
+    categories.some((category) => category.id === activeCategoryId) ? activeCategoryId : (categories[0]?.id ?? "");
 
   useEffect(() => {
     return () => clearTimeout(toastTimerRef.current);
@@ -1224,8 +1502,7 @@ function GuestMenuPage() {
 
   const locationZone = getLocationZoneName(location, t, locale);
   const locationSpot = getLocationSpotLabel(location, t, locale);
-  const categories = MENU_CATEGORIES;
-  const items = MENU_ITEMS.filter((item) => item.categoryId === activeCategoryId);
+  const items = MENU_ITEMS.filter((item) => item.categoryId === resolvedActiveCategoryId);
 
   const scrollCategoryTabs = (direction: -1 | 1) => {
     const element = categoryTabsRef.current;
@@ -1299,7 +1576,7 @@ function GuestMenuPage() {
           {categories.map((category) => (
             <button
               key={category.id}
-              className={category.id === activeCategoryId ? "tab tab-active" : "tab"}
+              className={category.id === resolvedActiveCategoryId ? "tab tab-active" : "tab"}
               onClick={() => setActiveCategoryId(category.id)}
             >
               {getCategoryName(category, t, locale)}
@@ -1597,7 +1874,7 @@ function GuestMenuPage() {
 }
 
 function GuestCartPage() {
-  const { t, formatMoney, formatDateTime, locale } = useI18n();
+  const { t, formatMoney, locale } = useI18n();
   const { locationToken = "" } = useParams();
   const navigate = useNavigate();
   const location = findLocationByToken(locationToken);
@@ -1608,12 +1885,21 @@ function GuestCartPage() {
   const [errorKey, setErrorKey] = useState<"cart_empty" | "send_failed" | null>(null);
   const [sending, setSending] = useState(false);
   const sendingRef = useRef(false);
+  const waiterT = useMemo(() => createTranslator(WAITER_NOTIFICATION_LOCALE), []);
+  const waiterFormatMoney = useMemo(
+    () => (cents: number) => centsToMoney(cents, WAITER_NOTIFICATION_LOCALE),
+    [],
+  );
+  const waiterFormatDateTime = useMemo(
+    () => (date: Date) => formatDateTime(date, WAITER_NOTIFICATION_LOCALE),
+    [],
+  );
 
   if (!location) {
     return <Navigate to="/" replace />;
   }
 
-  const locationSpot = getLocationSpotLabel(location, t, locale);
+  const waiterLocationSpot = getLocationSpotLabel(location, waiterT, WAITER_NOTIFICATION_LOCALE);
   const totals = calculateTotals(lines);
 
   const removeLine = (id: string) => {
@@ -1635,10 +1921,10 @@ function GuestCartPage() {
     }
 
     const message = buildOrderMessage({
-      t,
-      locale,
-      formatMoney,
-      formatDateTime,
+      t: waiterT,
+      locale: WAITER_NOTIFICATION_LOCALE,
+      formatMoney: waiterFormatMoney,
+      formatDateTime: waiterFormatDateTime,
       location,
       lines,
       notes,
@@ -1646,7 +1932,7 @@ function GuestCartPage() {
       totals,
     });
 
-    const title = t("order.push_title", "New order: {spot}", { spot: locationSpot });
+    const title = waiterT("order.push_title", "Novo pedido: {spot}", { spot: waiterLocationSpot });
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), NOTIFY_REQUEST_TIMEOUT_MS);

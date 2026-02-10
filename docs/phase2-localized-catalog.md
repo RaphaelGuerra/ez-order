@@ -38,9 +38,11 @@ Make menu maintenance independent from application locale files by storing menu 
 ## Update Workflow
 1. Edit `apps/web/public/catalog/order-config.json`.
 2. Run `npm run catalog:validate`.
-3. Run `npm run build`.
-4. Deploy.
+3. Run `npm run catalog:sync` (or just run `npm run build`, which already syncs).
+4. Run `npm run build`.
+5. Deploy.
 
 ## Notes
 - Fallback bundled config (`apps/web/src/config/order-config.json`) is kept for runtime resilience.
+- Fallback config is generated from the runtime catalog via `npm run catalog:sync`; avoid manual edits.
 - Keep IDs stable (`item_*`, `cat_*`, `mg_*`, `opt_*`) to avoid regressions in existing carts and references.

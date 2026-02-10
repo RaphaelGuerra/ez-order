@@ -25,6 +25,7 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
    - Copy `apps/web/.env.example` to `apps/web/.env`
    - Optional: set `VITE_DISPLAY_CURRENCY` (ISO-4217 like `BRL`, `USD`, `EUR`; default is `BRL`)
    - Optional: set `VITE_MENU_CONFIG_URL` (defaults to `/catalog/order-config.json`)
+   - Optional: set `VITE_MENU_CONFIG_TIMEOUT_MS` (catalog fetch timeout in milliseconds, default `4500`)
    - Set Pushover secrets in Cloudflare Pages dashboard (Settings -> Environment variables):
      - `PUSHOVER_APP_TOKEN` — your Pushover application token
      - `PUSHOVER_USER_KEY` — user key or delivery group key for the waiter device(s)
@@ -45,9 +46,13 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
 
 ## Build
 ```bash
-npm run catalog:validate
 npm run build
 ```
+
+The root `build` command already runs:
+1. `npm run catalog:validate`
+2. `npm run catalog:sync`
+3. web build (`@ez-order/web`)
 
 ## Runtime Catalog (Phase 1)
 This repo now supports runtime menu updates with a standalone JSON catalog.
@@ -62,8 +67,10 @@ Detailed phase plan: `docs/phase1-runtime-catalog-plan.md`.
 ### Non-Developer Update Flow
 1. Edit `apps/web/public/catalog/order-config.json`.
 2. Run `npm run catalog:validate`.
-3. If validation passes, run `npm run build`.
-4. Deploy.
+3. Run `npm run catalog:sync` (updates bundled fallback automatically).
+4. If validation passes, run `npm run build`.
+   - Or just run `npm run build` directly (it already validates and syncs).
+5. Deploy.
 
 ### Validation
 - Command: `npm run catalog:validate`
@@ -127,9 +134,12 @@ The app resolves these fields using the active locale (`en`, `pt-BR`, `fr`, `es`
 - The cart is cleared automatically when the notification is confirmed sent.
 - Allergy/notes text is included in the push notification message but not persisted locally.
 - Pushover credentials are server-side only (never exposed to the browser).
+- Waiter push notifications are always generated in Portuguese (pt-BR) for operational consistency.
 - `/api/notify` enforces origin checks (allowlist), request validation, per-IP rate limiting, and timeout protection.
 - Multilingual guest UI is built in (`English`, `Português (Brasil)`, `Français`, `Español`).
 - Language defaults to `Português (Brasil)`, can be changed from the top selector on each screen, and is saved in browser storage.
+- Runtime catalog loading is non-blocking: the app starts with bundled fallback and applies runtime catalog when it arrives.
+- `apps/web/src/config/order-config.json` should be treated as generated fallback data (synced from `apps/web/public/catalog/order-config.json`).
 - Translation dictionaries live at:
   - `apps/web/src/locales/en.json`
   - `apps/web/src/locales/pt-BR.json`

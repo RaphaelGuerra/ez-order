@@ -22,10 +22,11 @@ Allow business/content operations to update menu content (items, prices, availab
 - Bundled fallback: `apps/web/src/config/order-config.json`
 
 ### 2. Startup Flow
-1. App boot requests runtime catalog.
-2. Basic schema validation runs client-side.
-3. If valid: runtime data is applied.
-4. If invalid/unreachable: app logs warning and uses bundled fallback.
+1. App renders immediately using bundled fallback config.
+2. App boot requests runtime catalog in background (with timeout guard).
+3. Runtime validation runs client-side.
+4. If valid: runtime data is applied live.
+5. If invalid/unreachable: app logs warning and keeps bundled fallback.
 
 ### 3. Data Contract (Current)
 - `locations[]`: table/spot mapping and manual codes.
@@ -48,8 +49,9 @@ Allow business/content operations to update menu content (items, prices, availab
 ## Operational Workflow
 1. Edit `apps/web/public/catalog/order-config.json`.
 2. Run `npm run catalog:validate`.
-3. Run `npm run build`.
-4. Deploy to Cloudflare Pages.
+3. Run `npm run catalog:sync` to mirror fallback.
+4. Run `npm run build`.
+5. Deploy to Cloudflare Pages.
 
 ## Risks and Mitigations
 - Risk: broken JSON blocks runtime catalog.
