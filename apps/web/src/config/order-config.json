@@ -1019,14 +1019,19 @@
         "sortOrder": 3
       },
       {
-        "id": "cat_sandwiches",
-        "name": "Meals",
+        "id": "cat_quick_bites",
+        "name": "Light Bites",
         "sortOrder": 4
       },
       {
-        "id": "cat_quick_bites",
-        "name": "Light Bites",
+        "id": "cat_sandwiches",
+        "name": "Meals",
         "sortOrder": 5
+      },
+      {
+        "id": "cat_desserts",
+        "name": "Desserts",
+        "sortOrder": 6
       }
     ],
     "modifierGroups": [
@@ -1459,7 +1464,7 @@
         "modifierGroupIds": [
           "mg_sauce"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_truffle_fries",
@@ -1471,7 +1476,7 @@
         "modifierGroupIds": [
           "mg_sauce"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1585109649139-366815a0d713?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=400&h=300&fit=crop&auto=format"
       },
       {
         "id": "item_chicken_tenders",
@@ -1507,7 +1512,7 @@
         "modifierGroupIds": [
           "mg_sauce"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.pexels.com/photos/7011610/pexels-photo-7011610.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
       },
       {
         "id": "item_club_sandwich",
@@ -1639,6 +1644,36 @@
         "available": true,
         "modifierGroupIds": [],
         "imageUrl": "https://images.pexels.com/photos/19453404/pexels-photo-19453404.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
+      },
+      {
+        "id": "item_petit_gateau",
+        "categoryId": "cat_desserts",
+        "name": "Petit Gateau",
+        "description": "Chocolate lava cake with vanilla ice cream",
+        "basePriceCents": 2300,
+        "available": true,
+        "modifierGroupIds": [],
+        "imageUrl": "https://images.pexels.com/photos/11653574/pexels-photo-11653574.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
+      },
+      {
+        "id": "item_cheesecake_slice",
+        "categoryId": "cat_desserts",
+        "name": "Cheesecake Slice",
+        "description": "Creamy cheesecake with berry topping",
+        "basePriceCents": 2100,
+        "available": true,
+        "modifierGroupIds": [],
+        "imageUrl": "https://images.pexels.com/photos/16373069/pexels-photo-16373069.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
+      },
+      {
+        "id": "item_brigadeiro_portion",
+        "categoryId": "cat_desserts",
+        "name": "Brigadeiro Portion",
+        "description": "Assorted brigadeiros (4 units)",
+        "basePriceCents": 1800,
+        "available": true,
+        "modifierGroupIds": [],
+        "imageUrl": "https://images.pexels.com/photos/9285201/pexels-photo-9285201.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
       }
     ]
   },
