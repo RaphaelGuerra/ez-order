@@ -12,7 +12,8 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
 
 ## Workspace Layout
 - `apps/web`: React + Vite guest app (QR/manual table -> menu -> cart -> push notification).
-- `apps/web/src/config/order-config.json`: single source of truth for locations, table codes, menu, and pricing.
+- `apps/web/public/catalog/order-config.json`: runtime catalog (locations, menu, pricing) editable without touching app code.
+- `apps/web/src/config/order-config.json`: bundled fallback catalog used only if runtime catalog fails to load.
 - `functions/api/notify.ts`: Cloudflare Pages Function that calls the Pushover API.
 
 ## Quick Start
@@ -23,6 +24,7 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
 2. Configure:
    - Copy `apps/web/.env.example` to `apps/web/.env`
    - Optional: set `VITE_DISPLAY_CURRENCY` (ISO-4217 like `BRL`, `USD`, `EUR`; default is `BRL`)
+   - Optional: set `VITE_MENU_CONFIG_URL` (defaults to `/catalog/order-config.json`)
    - Set Pushover secrets in Cloudflare Pages dashboard (Settings -> Environment variables):
      - `PUSHOVER_APP_TOKEN` — your Pushover application token
      - `PUSHOVER_USER_KEY` — user key or delivery group key for the waiter device(s)
@@ -43,8 +45,57 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
 
 ## Build
 ```bash
+npm run catalog:validate
 npm run build
 ```
+
+## Runtime Catalog (Phase 1)
+This repo now supports runtime menu updates with a standalone JSON catalog.
+Detailed phase plan: `docs/phase1-runtime-catalog-plan.md`.
+
+- App load order:
+  1. Tries to fetch `VITE_MENU_CONFIG_URL` (or `/catalog/order-config.json` by default).
+  2. Validates basic catalog shape.
+  3. If fetch/validation fails, falls back to bundled `apps/web/src/config/order-config.json`.
+- This lets you update menu items, prices, availability, and images by editing a single JSON file.
+
+### Non-Developer Update Flow
+1. Edit `apps/web/public/catalog/order-config.json`.
+2. Run `npm run catalog:validate`.
+3. If validation passes, run `npm run build`.
+4. Deploy.
+
+### Validation
+- Command: `npm run catalog:validate`
+- Checks include:
+  - schema shape (`locations`, `menu`, `pricing`)
+  - duplicate IDs/tokens/manual codes
+  - broken category/group references
+  - invalid prices/bounds
+  - malformed image URLs
+
+## Runtime Catalog (Phase 2: Localized Content)
+Menu content now supports multilingual fields inside the catalog itself.
+
+- `menu.categories[].nameI18n`
+- `menu.modifierGroups[].nameI18n`
+- `menu.modifierOptions[].nameI18n`
+- `menu.items[].nameI18n`
+- `menu.items[].descriptionI18n`
+
+The app resolves these fields using the active locale (`en`, `pt-BR`, `fr`, `es`), with fallback behavior if needed.
+
+### What this changes operationally
+- To add/edit menu item names/descriptions in all languages, update only `apps/web/public/catalog/order-config.json`.
+- No need to touch `apps/web/src/locales/*.json` for menu content updates.
+- Locale files remain responsible for static interface strings (buttons, labels, errors, etc.).
+
+### Required locale keys in catalog
+`npm run catalog:validate` now enforces that each `nameI18n`/`descriptionI18n` block includes all supported locales:
+- `en`
+- `pt-BR`
+- `fr`
+- `es`
 
 ## Web Routes
 - `/` manual table number fallback

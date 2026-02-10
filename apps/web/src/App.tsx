@@ -19,6 +19,7 @@ type LocaleCode = "en" | "pt-BR" | "fr" | "es";
 type LocaleDictionary = Record<string, string>;
 type TranslateVars = Record<string, string | number>;
 type TranslateFn = (key: string, fallback: string, vars?: TranslateVars) => string;
+type CatalogTextByLocale = Partial<Record<LocaleCode, string>>;
 
 type Location = {
   id: string;
@@ -26,11 +27,26 @@ type Location = {
   zoneName: string;
   spotLabel: string;
   manualCodes: string[];
+  zoneNameI18n?: CatalogTextByLocale;
+  spotLabelI18n?: CatalogTextByLocale;
 };
 
-type MenuCategory = { id: string; name: string; sortOrder: number };
-type ModifierGroup = { id: string; name: string; minSelect: number; maxSelect: number; required: boolean };
-type ModifierOption = { id: string; groupId: string; name: string; priceDeltaCents: number };
+type MenuCategory = { id: string; name: string; sortOrder: number; nameI18n?: CatalogTextByLocale };
+type ModifierGroup = {
+  id: string;
+  name: string;
+  minSelect: number;
+  maxSelect: number;
+  required: boolean;
+  nameI18n?: CatalogTextByLocale;
+};
+type ModifierOption = {
+  id: string;
+  groupId: string;
+  name: string;
+  priceDeltaCents: number;
+  nameI18n?: CatalogTextByLocale;
+};
 type MenuItem = {
   id: string;
   categoryId: string;
@@ -40,12 +56,17 @@ type MenuItem = {
   available: boolean;
   modifierGroupIds: string[];
   imageUrl?: string;
+  nameI18n?: CatalogTextByLocale;
+  descriptionI18n?: CatalogTextByLocale;
 };
 
 type ModifierSelection = {
   optionId: string;
   quantity: number;
 };
+
+type GroupSelectionState = Record<string, number>;
+type ConfigSelectionState = Record<string, GroupSelectionState>;
 
 type CartLine = {
   id: string;
@@ -61,7 +82,7 @@ type CartLine = {
 
 type ConfigState = {
   item: MenuItem;
-  selectedOptionsByGroup: Record<string, Record<string, number>>;
+  selectedOptionsByGroup: ConfigSelectionState;
   validationError: string | null;
 };
 
@@ -69,7 +90,7 @@ type SentPageState = {
   sentAtIso?: string;
 };
 
-type AppConfig = {
+export type AppConfig = {
   locations: Location[];
   menu: {
     categories: MenuCategory[];
@@ -91,7 +112,7 @@ type I18nContextValue = {
   formatDateTime: (date: Date) => string;
 };
 
-const APP_CONFIG: AppConfig = configData;
+const DEFAULT_APP_CONFIG: AppConfig = configData;
 const FALLBACK_LOCALE: LocaleCode = "pt-BR";
 const SUPPORTED_LOCALES: LocaleCode[] = ["en", "pt-BR", "fr", "es"];
 const LOCALE_STORAGE_KEY = "ez-order:locale";
@@ -113,17 +134,104 @@ const LOCALES: Record<LocaleCode, LocaleDictionary> = {
 const RAW_DISPLAY_CURRENCY = (import.meta.env.VITE_DISPLAY_CURRENCY ?? "BRL").trim().toUpperCase();
 const DISPLAY_CURRENCY = /^[A-Z]{3}$/.test(RAW_DISPLAY_CURRENCY) ? RAW_DISPLAY_CURRENCY : "BRL";
 
-const LOCATIONS = APP_CONFIG.locations;
-const MENU_CATEGORIES = [...APP_CONFIG.menu.categories].sort((a, b) => a.sortOrder - b.sortOrder);
-const MODIFIER_GROUPS = APP_CONFIG.menu.modifierGroups;
-const MODIFIER_OPTIONS = APP_CONFIG.menu.modifierOptions;
-const MENU_ITEMS = APP_CONFIG.menu.items;
-const TAX_RATE = APP_CONFIG.pricing.taxRate;
-const SERVICE_FEE_RATE = APP_CONFIG.pricing.serviceFeeRate;
+let APP_CONFIG: AppConfig = DEFAULT_APP_CONFIG;
+let LOCATIONS: Location[] = [];
+let MENU_CATEGORIES: MenuCategory[] = [];
+let MODIFIER_GROUPS: ModifierGroup[] = [];
+let MODIFIER_OPTIONS: ModifierOption[] = [];
+let MENU_ITEMS: MenuItem[] = [];
+let TAX_RATE = 0;
+let SERVICE_FEE_RATE = 0;
 
-const MENU_ITEM_BY_ID = new Map(MENU_ITEMS.map((item) => [item.id, item]));
-const MODIFIER_GROUP_BY_ID = new Map(MODIFIER_GROUPS.map((group) => [group.id, group]));
-const MODIFIER_OPTION_BY_ID = new Map(MODIFIER_OPTIONS.map((option) => [option.id, option]));
+let MENU_ITEM_BY_ID = new Map<string, MenuItem>();
+let MODIFIER_GROUP_BY_ID = new Map<string, ModifierGroup>();
+let MODIFIER_OPTION_BY_ID = new Map<string, ModifierOption>();
+let MODIFIER_OPTIONS_BY_GROUP = new Map<string, ModifierOption[]>();
+let INCLUDED_MODIFIER_OPTIONS_BY_GROUP = new Map<string, ModifierOption[]>();
+let INCLUDED_MODIFIER_OPTION_IDS_BY_GROUP = new Map<string, Set<string>>();
+
+const EMPTY_MODIFIER_OPTIONS: ModifierOption[] = [];
+const EMPTY_MODIFIER_OPTION_IDS = new Set<string>();
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function isValidAppConfig(value: unknown): value is AppConfig {
+  if (!isObjectRecord(value)) {
+    return false;
+  }
+
+  const locations = value.locations;
+  const menu = value.menu;
+  const pricing = value.pricing;
+
+  if (!Array.isArray(locations) || !isObjectRecord(menu) || !isObjectRecord(pricing)) {
+    return false;
+  }
+
+  if (
+    !Array.isArray(menu.categories) ||
+    !Array.isArray(menu.modifierGroups) ||
+    !Array.isArray(menu.modifierOptions) ||
+    !Array.isArray(menu.items)
+  ) {
+    return false;
+  }
+
+  return typeof pricing.taxRate === "number" && typeof pricing.serviceFeeRate === "number";
+}
+
+function rebuildConfigIndexes(config: AppConfig): void {
+  LOCATIONS = config.locations;
+  MENU_CATEGORIES = [...config.menu.categories].sort((a, b) => a.sortOrder - b.sortOrder);
+  MODIFIER_GROUPS = config.menu.modifierGroups;
+  MODIFIER_OPTIONS = config.menu.modifierOptions;
+  MENU_ITEMS = config.menu.items;
+  TAX_RATE = config.pricing.taxRate;
+  SERVICE_FEE_RATE = config.pricing.serviceFeeRate;
+
+  MENU_ITEM_BY_ID = new Map(MENU_ITEMS.map((item) => [item.id, item]));
+  MODIFIER_GROUP_BY_ID = new Map(MODIFIER_GROUPS.map((group) => [group.id, group]));
+  MODIFIER_OPTION_BY_ID = new Map(MODIFIER_OPTIONS.map((option) => [option.id, option]));
+
+  MODIFIER_OPTIONS_BY_GROUP = new Map<string, ModifierOption[]>();
+  for (const option of MODIFIER_OPTIONS) {
+    const groupOptions = MODIFIER_OPTIONS_BY_GROUP.get(option.groupId);
+    if (groupOptions) {
+      groupOptions.push(option);
+    } else {
+      MODIFIER_OPTIONS_BY_GROUP.set(option.groupId, [option]);
+    }
+  }
+
+  INCLUDED_MODIFIER_OPTIONS_BY_GROUP = new Map<string, ModifierOption[]>(
+    Array.from(MODIFIER_OPTIONS_BY_GROUP.entries()).map(([groupId, options]) => [
+      groupId,
+      options.filter((option) => option.priceDeltaCents <= 0),
+    ]),
+  );
+  INCLUDED_MODIFIER_OPTION_IDS_BY_GROUP = new Map<string, Set<string>>(
+    Array.from(INCLUDED_MODIFIER_OPTIONS_BY_GROUP.entries()).map(([groupId, options]) => [
+      groupId,
+      new Set(options.map((option) => option.id)),
+    ]),
+  );
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function setRuntimeConfig(nextConfig: AppConfig): void {
+  if (!isValidAppConfig(nextConfig)) {
+    console.warn("[catalog] Ignoring invalid runtime config payload.");
+    return;
+  }
+
+  APP_CONFIG = nextConfig;
+  rebuildConfigIndexes(nextConfig);
+}
+
+rebuildConfigIndexes(APP_CONFIG);
 
 const CART_PREFIX = "ez-order:cart:";
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -387,32 +495,77 @@ function calculateTotals(lines: CartLine[]) {
   return { subtotalCents, taxCents, serviceFeeCents, totalCents };
 }
 
-function getCategoryName(category: MenuCategory, t: TranslateFn): string {
+function getCatalogLocalizedText(textByLocale: CatalogTextByLocale | undefined, locale: LocaleCode): string | null {
+  if (!textByLocale || typeof textByLocale !== "object") {
+    return null;
+  }
+
+  const direct = textByLocale[locale];
+  if (typeof direct === "string" && direct.trim()) {
+    return direct.trim();
+  }
+
+  const fallback = textByLocale[FALLBACK_LOCALE];
+  if (typeof fallback === "string" && fallback.trim()) {
+    return fallback.trim();
+  }
+
+  for (const localeCode of SUPPORTED_LOCALES) {
+    const candidate = textByLocale[localeCode];
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+
+  return null;
+}
+
+function getCategoryName(category: MenuCategory, t: TranslateFn, locale: LocaleCode): string {
+  const fromCatalog = getCatalogLocalizedText(category.nameI18n, locale);
+  if (fromCatalog) {
+    return fromCatalog;
+  }
   return t(`menu.categories.${category.id}.name`, category.name);
 }
 
-function getMenuItemName(item: MenuItem, t: TranslateFn): string {
+function getMenuItemName(item: MenuItem, t: TranslateFn, locale: LocaleCode): string {
+  const fromCatalog = getCatalogLocalizedText(item.nameI18n, locale);
+  if (fromCatalog) {
+    return fromCatalog;
+  }
   return t(`menu.items.${item.id}.name`, item.name);
 }
 
-function getMenuItemDescription(item: MenuItem, t: TranslateFn): string {
+function getMenuItemDescription(item: MenuItem, t: TranslateFn, locale: LocaleCode): string {
+  const fromCatalog = getCatalogLocalizedText(item.descriptionI18n, locale);
+  if (fromCatalog) {
+    return fromCatalog;
+  }
   return t(`menu.items.${item.id}.description`, item.description ?? "");
 }
 
-function getModifierGroupName(group: ModifierGroup, t: TranslateFn): string {
+function getModifierGroupName(group: ModifierGroup, t: TranslateFn, locale: LocaleCode): string {
+  const fromCatalog = getCatalogLocalizedText(group.nameI18n, locale);
+  if (fromCatalog) {
+    return fromCatalog;
+  }
   return t(`menu.modifierGroups.${group.id}.name`, group.name);
 }
 
-function getModifierOptionName(option: ModifierOption, t: TranslateFn): string {
+function getModifierOptionName(option: ModifierOption, t: TranslateFn, locale: LocaleCode): string {
+  const fromCatalog = getCatalogLocalizedText(option.nameI18n, locale);
+  if (fromCatalog) {
+    return fromCatalog;
+  }
   return t(`menu.modifierOptions.${option.id}.name`, option.name);
 }
 
-function getLineItemName(line: CartLine, t: TranslateFn): string {
+function getLineItemName(line: CartLine, t: TranslateFn, locale: LocaleCode): string {
   const item = MENU_ITEM_BY_ID.get(line.menuItemId);
-  return item ? getMenuItemName(item, t) : line.itemNameSnapshot;
+  return item ? getMenuItemName(item, t, locale) : line.itemNameSnapshot;
 }
 
-function buildModifierLabel(selections: ModifierSelection[], t: TranslateFn): string {
+function buildModifierLabel(selections: ModifierSelection[], t: TranslateFn, locale: LocaleCode): string {
   return selections
     .slice()
     .sort((a, b) => a.optionId.localeCompare(b.optionId))
@@ -421,19 +574,24 @@ function buildModifierLabel(selections: ModifierSelection[], t: TranslateFn): st
       if (!option) {
         return null;
       }
-      const name = getModifierOptionName(option, t);
+      const name = getModifierOptionName(option, t, locale);
       return selection.quantity > 1 ? `${selection.quantity}x ${name}` : name;
     })
     .filter((label): label is string => Boolean(label))
     .join(", ");
 }
 
-function getLineModifierLabel(line: CartLine, t: TranslateFn): string {
-  const translated = buildModifierLabel(line.modifierSelections, t);
+function getLineModifierLabel(line: CartLine, t: TranslateFn, locale: LocaleCode): string {
+  const translated = buildModifierLabel(line.modifierSelections, t, locale);
   return translated || line.modifierLabel;
 }
 
-function getLocationZoneName(location: Location, t: TranslateFn): string {
+function getLocationZoneName(location: Location, t: TranslateFn, locale: LocaleCode): string {
+  const catalogText = getCatalogLocalizedText(location.zoneNameI18n, locale);
+  if (catalogText) {
+    return catalogText;
+  }
+
   const translationKey = ZONE_TRANSLATION_KEY_BY_VALUE[location.zoneName];
   if (!translationKey) {
     return location.zoneName;
@@ -441,7 +599,12 @@ function getLocationZoneName(location: Location, t: TranslateFn): string {
   return t(translationKey, location.zoneName);
 }
 
-function getLocationSpotLabel(location: Location, t: TranslateFn): string {
+function getLocationSpotLabel(location: Location, t: TranslateFn, locale: LocaleCode): string {
+  const catalogText = getCatalogLocalizedText(location.spotLabelI18n, locale);
+  if (catalogText) {
+    return catalogText;
+  }
+
   for (const { pattern, key, fallback } of SPOT_TRANSLATION_PATTERNS) {
     const match = pattern.exec(location.spotLabel);
     if (!match) {
@@ -453,7 +616,24 @@ function getLocationSpotLabel(location: Location, t: TranslateFn): string {
 }
 
 function getOptionsForGroup(groupId: string): ModifierOption[] {
-  return MODIFIER_OPTIONS.filter((option) => option.groupId === groupId);
+  return MODIFIER_OPTIONS_BY_GROUP.get(groupId) ?? EMPTY_MODIFIER_OPTIONS;
+}
+
+function getIncludedOptionsForGroup(groupId: string): ModifierOption[] {
+  return INCLUDED_MODIFIER_OPTIONS_BY_GROUP.get(groupId) ?? EMPTY_MODIFIER_OPTIONS;
+}
+
+function getIncludedOptionIdsForGroup(groupId: string): Set<string> {
+  return INCLUDED_MODIFIER_OPTION_IDS_BY_GROUP.get(groupId) ?? EMPTY_MODIFIER_OPTION_IDS;
+}
+
+function isIncludedModifierOption(groupId: string, optionId: string): boolean {
+  return getIncludedOptionIdsForGroup(groupId).has(optionId);
+}
+
+function isPaidModifierOptionId(optionId: string): boolean {
+  const option = MODIFIER_OPTION_BY_ID.get(optionId);
+  return Boolean(option && option.priceDeltaCents > 0);
 }
 
 function getSelectionBounds(group: ModifierGroup): { min: number; max: number } {
@@ -462,22 +642,14 @@ function getSelectionBounds(group: ModifierGroup): { min: number; max: number } 
   return { min, max };
 }
 
-function getIncludedSelectionCount(
-  options: ModifierOption[],
-  selectedQuantitiesByOption: Record<string, number>,
-): number {
-  const includedOptionIds = new Set(
-    options.filter((option) => option.priceDeltaCents <= 0).map((option) => option.id),
-  );
-
+function getIncludedSelectionCount(groupId: string, selectedQuantitiesByOption: GroupSelectionState): number {
+  const includedOptionIds = getIncludedOptionIdsForGroup(groupId);
   return Object.entries(selectedQuantitiesByOption).filter(
     ([optionId, quantity]) => quantity > 0 && includedOptionIds.has(optionId),
   ).length;
 }
 
-function flattenSelectedOptionsByGroup(
-  selectedOptionsByGroup: Record<string, Record<string, number>>,
-): ModifierSelection[] {
+function flattenSelectedOptionsByGroup(selectedOptionsByGroup: ConfigSelectionState): ModifierSelection[] {
   return Object.values(selectedOptionsByGroup)
     .flatMap((groupSelections) =>
       Object.entries(groupSelections).map(([optionId, quantity]) => ({
@@ -492,6 +664,38 @@ function flattenSelectedOptionsByGroup(
     }));
 }
 
+function normalizeSelectionQuantity(quantity: number): number {
+  return Math.max(1, Math.floor(quantity));
+}
+
+function normalizeSelectionsForPricing(selections: ModifierSelection[]): ModifierSelection[] {
+  return selections
+    .filter((selection) => MODIFIER_OPTION_BY_ID.has(selection.optionId))
+    .map((selection) => ({
+      optionId: selection.optionId,
+      quantity: normalizeSelectionQuantity(selection.quantity),
+    }))
+    .sort((a, b) => a.optionId.localeCompare(b.optionId));
+}
+
+function calculateModifierDeltaCents(selections: ModifierSelection[]): number {
+  return selections.reduce((sum, selection) => {
+    const option = MODIFIER_OPTION_BY_ID.get(selection.optionId);
+    if (!option) {
+      return sum;
+    }
+    return sum + option.priceDeltaCents * selection.quantity;
+  }, 0);
+}
+
+function calculateMenuItemUnitPriceCents(item: MenuItem, selections: ModifierSelection[]): number {
+  return item.basePriceCents + calculateModifierDeltaCents(selections);
+}
+
+function getCartLineItemCount(lines: CartLine[]): number {
+  return lines.reduce((count, line) => count + line.quantity, 0);
+}
+
 function lineSignature(menuItemId: string, selections: ModifierSelection[]): string {
   const parts = selections
     .slice()
@@ -500,8 +704,89 @@ function lineSignature(menuItemId: string, selections: ModifierSelection[]): str
   return [menuItemId, ...parts].join("|");
 }
 
+function upsertCartLine(
+  lines: CartLine[],
+  item: MenuItem,
+  selections: ModifierSelection[],
+  t: TranslateFn,
+  locale: LocaleCode,
+): void {
+  const signature = lineSignature(item.id, selections);
+  const itemNameSnapshot = getMenuItemName(item, t, locale);
+  const modifierLabel = buildModifierLabel(selections, t, locale);
+  const unitPriceCents = calculateMenuItemUnitPriceCents(item, selections);
+
+  const existingLine = lines.find(
+    (line) => lineSignature(line.menuItemId, line.modifierSelections) === signature,
+  );
+
+  if (existingLine) {
+    existingLine.quantity += 1;
+    existingLine.lineTotalCents = existingLine.quantity * existingLine.unitPriceCents;
+    existingLine.itemNameSnapshot = itemNameSnapshot;
+    existingLine.modifierLabel = modifierLabel;
+    return;
+  }
+
+  lines.push({
+    id: crypto.randomUUID(),
+    menuItemId: item.id,
+    itemNameSnapshot,
+    quantity: 1,
+    unitPriceCents,
+    lineTotalCents: unitPriceCents,
+    modifierSelections: selections,
+    modifierLabel,
+  });
+}
+
+function validateItemConfiguration(
+  item: MenuItem,
+  selectedOptionsByGroup: ConfigSelectionState,
+  t: TranslateFn,
+  locale: LocaleCode,
+): string | null {
+  for (const groupId of item.modifierGroupIds) {
+    const group = MODIFIER_GROUP_BY_ID.get(groupId);
+    if (!group) {
+      continue;
+    }
+
+    const { min, max } = getSelectionBounds(group);
+    const groupName = getModifierGroupName(group, t, locale);
+    const selectedQuantitiesByOption = selectedOptionsByGroup[groupId] ?? {};
+    const includedOptions = getIncludedOptionsForGroup(groupId);
+    const includedSelectedCount = getIncludedSelectionCount(groupId, selectedQuantitiesByOption);
+
+    if (includedOptions.length < min) {
+      return t(
+        "error.modifier_unavailable",
+        "This item is temporarily unavailable. Required options for {group} are missing.",
+        { group: groupName },
+      );
+    }
+
+    if (includedSelectedCount < min) {
+      return t("error.modifier_required", "Select at least {count} option(s) for {group}.", {
+        count: min,
+        group: groupName,
+      });
+    }
+
+    if (includedSelectedCount > max) {
+      return t("error.modifier_limit", "Select up to {count} option(s) for {group}.", {
+        count: max,
+        group: groupName,
+      });
+    }
+  }
+
+  return null;
+}
+
 function buildOrderMessage(input: {
   t: TranslateFn;
+  locale: LocaleCode;
   formatMoney: (cents: number) => string;
   formatDateTime: (date: Date) => string;
   location: Location;
@@ -510,12 +795,12 @@ function buildOrderMessage(input: {
   allergyNotes: string;
   totals: { subtotalCents: number; taxCents: number; serviceFeeCents: number; totalCents: number };
 }): string {
-  const locationZone = getLocationZoneName(input.location, input.t);
-  const locationSpot = getLocationSpotLabel(input.location, input.t);
+  const locationZone = getLocationZoneName(input.location, input.t, input.locale);
+  const locationSpot = getLocationSpotLabel(input.location, input.t, input.locale);
   const lineRows = input.lines
     .map((line) => {
-      const itemName = getLineItemName(line, input.t);
-      const modifierLabel = getLineModifierLabel(line, input.t);
+      const itemName = getLineItemName(line, input.t, input.locale);
+      const modifierLabel = getLineModifierLabel(line, input.t, input.locale);
       const modifierText = modifierLabel ? ` (${modifierLabel})` : "";
       const noteText = line.notes?.trim()
         ? input.t("order.item_note_suffix", " | note: {value}", { value: line.notes.trim() })
@@ -831,7 +1116,7 @@ function GuestStartPage() {
 }
 
 function GuestLocationPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { locationToken = "" } = useParams();
   const navigate = useNavigate();
   const location = findLocationByToken(locationToken);
@@ -852,8 +1137,8 @@ function GuestLocationPage() {
     );
   }
 
-  const locationZone = getLocationZoneName(location, t);
-  const locationSpot = getLocationSpotLabel(location, t);
+  const locationZone = getLocationZoneName(location, t, locale);
+  const locationSpot = getLocationSpotLabel(location, t, locale);
 
   return (
     <Screen
@@ -880,7 +1165,7 @@ function GuestLocationPage() {
 }
 
 function GuestMenuPage() {
-  const { t, formatMoney } = useI18n();
+  const { t, formatMoney, locale } = useI18n();
   const { locationToken = "" } = useParams();
   const navigate = useNavigate();
   const location = findLocationByToken(locationToken);
@@ -889,26 +1174,72 @@ function GuestMenuPage() {
   const [config, setConfig] = useState<ConfigState | null>(null);
   const [cartCount, setCartCount] = useState<number>(() => {
     const cart = loadCartLines(locationToken);
-    return cart.reduce((count, line) => count + line.quantity, 0);
+    return getCartLineItemCount(cart);
   });
   const [toastText, setToastText] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const categoryTabsRef = useRef<HTMLElement | null>(null);
+  const [canScrollCategoriesLeft, setCanScrollCategoriesLeft] = useState(false);
+  const [canScrollCategoriesRight, setCanScrollCategoriesRight] = useState(false);
 
   useEffect(() => {
     return () => clearTimeout(toastTimerRef.current);
   }, []);
 
+  const updateCategoryScrollIndicators = () => {
+    const element = categoryTabsRef.current;
+    if (!element) {
+      setCanScrollCategoriesLeft(false);
+      setCanScrollCategoriesRight(false);
+      return;
+    }
+
+    const tolerancePx = 2;
+    const maxScrollLeft = Math.max(0, element.scrollWidth - element.clientWidth);
+    setCanScrollCategoriesLeft(element.scrollLeft > tolerancePx);
+    setCanScrollCategoriesRight(maxScrollLeft - element.scrollLeft > tolerancePx);
+  };
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(updateCategoryScrollIndicators);
+    const handleResize = () => updateCategoryScrollIndicators();
+    window.addEventListener("resize", handleResize);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && categoryTabsRef.current) {
+      resizeObserver = new ResizeObserver(() => updateCategoryScrollIndicators());
+      resizeObserver.observe(categoryTabsRef.current);
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", handleResize);
+      resizeObserver?.disconnect();
+    };
+  }, [t]);
+
   if (!location) {
     return <Navigate to="/" replace />;
   }
 
-  const locationZone = getLocationZoneName(location, t);
-  const locationSpot = getLocationSpotLabel(location, t);
+  const locationZone = getLocationZoneName(location, t, locale);
+  const locationSpot = getLocationSpotLabel(location, t, locale);
   const categories = MENU_CATEGORIES;
   const items = MENU_ITEMS.filter((item) => item.categoryId === activeCategoryId);
 
+  const scrollCategoryTabs = (direction: -1 | 1) => {
+    const element = categoryTabsRef.current;
+    if (!element) {
+      return;
+    }
+
+    const scrollAmount = Math.max(150, Math.floor(element.clientWidth * 0.6));
+    element.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+    window.setTimeout(updateCategoryScrollIndicators, 220);
+  };
+
   const openConfigurator = (item: MenuItem) => {
-    const defaults: Record<string, Record<string, number>> = {};
+    const defaults: ConfigSelectionState = {};
     for (const groupId of item.modifierGroupIds) {
       const group = MODIFIER_GROUP_BY_ID.get(groupId);
       if (!group) {
@@ -918,7 +1249,7 @@ function GuestMenuPage() {
 
       const options = getOptionsForGroup(groupId);
       const { min } = getSelectionBounds(group);
-      const includedOptions = options.filter((option) => option.priceDeltaCents <= 0);
+      const includedOptions = getIncludedOptionsForGroup(groupId);
       const defaultOptions = (includedOptions.length > 0 ? includedOptions : options).slice(
         0,
         Math.min(min, options.length),
@@ -933,101 +1264,20 @@ function GuestMenuPage() {
     setConfig({ item, selectedOptionsByGroup: defaults, validationError: null });
   };
 
-  const validateConfigSelection = (
-    item: MenuItem,
-    selectedOptionsByGroup: Record<string, Record<string, number>>,
-  ): string | null => {
-    for (const groupId of item.modifierGroupIds) {
-      const group = MODIFIER_GROUP_BY_ID.get(groupId);
-      if (!group) {
-        continue;
-      }
-
-      const options = getOptionsForGroup(groupId);
-      const { min, max } = getSelectionBounds(group);
-      const groupName = getModifierGroupName(group, t);
-      const selectedQuantitiesByOption = selectedOptionsByGroup[groupId] ?? {};
-      const includedOptions = options.filter((option) => option.priceDeltaCents <= 0);
-      const includedSelectedCount = getIncludedSelectionCount(options, selectedQuantitiesByOption);
-
-      if (includedOptions.length < min) {
-        return t(
-          "error.modifier_unavailable",
-          "This item is temporarily unavailable. Required options for {group} are missing.",
-          { group: groupName },
-        );
-      }
-
-      if (includedSelectedCount < min) {
-        return t("error.modifier_required", "Select at least {count} option(s) for {group}.", {
-          count: min,
-          group: groupName,
-        });
-      }
-
-      if (includedSelectedCount > max) {
-        return t("error.modifier_limit", "Select up to {count} option(s) for {group}.", {
-          count: max,
-          group: groupName,
-        });
-      }
-    }
-
-    return null;
-  };
-
   const addToCart = (item: MenuItem, selections: ModifierSelection[]) => {
     if (!item.available) {
       return;
     }
 
-    const normalizedSelections = selections
-      .filter((selection) => MODIFIER_OPTION_BY_ID.has(selection.optionId))
-      .map((selection) => ({
-        optionId: selection.optionId,
-        quantity: Math.max(1, Math.floor(selection.quantity)),
-      }))
-      .sort((a, b) => a.optionId.localeCompare(b.optionId));
-
-    const modifierDelta = normalizedSelections.reduce((sum, selection) => {
-      const option = MODIFIER_OPTION_BY_ID.get(selection.optionId);
-      if (!option) {
-        return sum;
-      }
-      return sum + option.priceDeltaCents * selection.quantity;
-    }, 0);
-
-    const unitPrice = item.basePriceCents + modifierDelta;
+    const normalizedSelections = normalizeSelectionsForPricing(selections);
     const existing = loadCartLines(locationToken);
-    const signature = lineSignature(item.id, normalizedSelections);
-
-    const existingLine = existing.find(
-      (line) => lineSignature(line.menuItemId, line.modifierSelections) === signature,
-    );
-
-    if (existingLine) {
-      existingLine.quantity += 1;
-      existingLine.lineTotalCents = existingLine.quantity * existingLine.unitPriceCents;
-      existingLine.itemNameSnapshot = getMenuItemName(item, t);
-      existingLine.modifierLabel = buildModifierLabel(normalizedSelections, t);
-    } else {
-      existing.push({
-        id: crypto.randomUUID(),
-        menuItemId: item.id,
-        itemNameSnapshot: getMenuItemName(item, t),
-        quantity: 1,
-        unitPriceCents: unitPrice,
-        lineTotalCents: unitPrice,
-        modifierSelections: normalizedSelections,
-        modifierLabel: buildModifierLabel(normalizedSelections, t),
-      });
-    }
+    upsertCartLine(existing, item, normalizedSelections, t, locale);
 
     saveCartLines(locationToken, existing);
-    setCartCount(existing.reduce((count, line) => count + line.quantity, 0));
+    setCartCount(getCartLineItemCount(existing));
     setConfig(null);
 
-    const itemName = getMenuItemName(item, t);
+    const itemName = getMenuItemName(item, t, locale);
     setToastText(t("toast.item_added", "{item} added to cart", { item: itemName }));
     clearTimeout(toastTimerRef.current);
     toastTimerRef.current = setTimeout(() => setToastText(null), 2000);
@@ -1035,17 +1285,37 @@ function GuestMenuPage() {
 
   return (
     <Screen title={t("screen.menu.title", "Menu")} subtitle={`${locationZone} · ${locationSpot}`}>
-      <section className="category-tabs">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            className={category.id === activeCategoryId ? "tab tab-active" : "tab"}
-            onClick={() => setActiveCategoryId(category.id)}
-          >
-            {getCategoryName(category, t)}
-          </button>
-        ))}
-      </section>
+      <div className="category-tabs-shell">
+        <button
+          type="button"
+          className="category-tabs-arrow"
+          disabled={!canScrollCategoriesLeft}
+          onClick={() => scrollCategoryTabs(-1)}
+          aria-label={t("action.scroll_categories_left", "Scroll categories left")}
+        >
+          <span aria-hidden="true">‹</span>
+        </button>
+        <section className="category-tabs" ref={categoryTabsRef} onScroll={updateCategoryScrollIndicators}>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={category.id === activeCategoryId ? "tab tab-active" : "tab"}
+              onClick={() => setActiveCategoryId(category.id)}
+            >
+              {getCategoryName(category, t, locale)}
+            </button>
+          ))}
+        </section>
+        <button
+          type="button"
+          className="category-tabs-arrow"
+          disabled={!canScrollCategoriesRight}
+          onClick={() => scrollCategoryTabs(1)}
+          aria-label={t("action.scroll_categories_right", "Scroll categories right")}
+        >
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
 
       <section className="menu-grid">
         {items.length === 0 ? (
@@ -1059,12 +1329,12 @@ function GuestMenuPage() {
             <article key={item.id} className={`panel${!item.available ? " item-unavailable" : ""}`}>
               <MenuItemImage
                 src={item.imageUrl}
-                alt={getMenuItemName(item, t)}
+                alt={getMenuItemName(item, t, locale)}
                 containerClassName="menu-item-thumb"
                 fallbackText={t("media.image_unavailable", "Image unavailable")}
               />
-              <h3>{getMenuItemName(item, t)}</h3>
-              <p className="subtle">{getMenuItemDescription(item, t)}</p>
+              <h3>{getMenuItemName(item, t, locale)}</h3>
+              <p className="subtle">{getMenuItemDescription(item, t, locale)}</p>
               <p className="price">{formatMoney(item.basePriceCents)}</p>
               {!item.available ? <p className="warning">{t("error.item_unavailable", "Out of stock")}</p> : null}
               <button
@@ -1111,11 +1381,11 @@ function GuestMenuPage() {
             </button>
             <MenuItemImage
               src={config.item.imageUrl}
-              alt={getMenuItemName(config.item, t)}
+              alt={getMenuItemName(config.item, t, locale)}
               containerClassName="menu-item-hero"
               fallbackText={t("media.image_unavailable", "Image unavailable")}
             />
-            <h3>{getMenuItemName(config.item, t)}</h3>
+            <h3>{getMenuItemName(config.item, t, locale)}</h3>
             {config.item.modifierGroupIds.map((groupId) => {
               const group = MODIFIER_GROUP_BY_ID.get(groupId);
               if (!group) {
@@ -1125,11 +1395,11 @@ function GuestMenuPage() {
               const selectedQuantitiesByOption = config.selectedOptionsByGroup[group.id] ?? {};
               const { min, max } = getSelectionBounds(group);
               const useRadio = min === 1 && max === 1;
-              const includedSelectedCount = getIncludedSelectionCount(options, selectedQuantitiesByOption);
+              const includedSelectedCount = getIncludedSelectionCount(group.id, selectedQuantitiesByOption);
 
               return (
                 <fieldset key={group.id} className="fieldset">
-                  <legend>{getModifierGroupName(group, t)}</legend>
+                  <legend>{getModifierGroupName(group, t, locale)}</legend>
                   {options.map((option) => {
                     const delta = option.priceDeltaCents;
                     const deltaLabel = delta === 0 ? "" : ` (${delta > 0 ? "+" : ""}${formatMoney(delta)})`;
@@ -1142,7 +1412,7 @@ function GuestMenuPage() {
                     if (isPaidExtra) {
                       return (
                         <div key={option.id} className="option-row option-row-quantity">
-                          <span>{`${getModifierOptionName(option, t)}${deltaLabel}`}</span>
+                          <span>{`${getModifierOptionName(option, t, locale)}${deltaLabel}`}</span>
                           <div className="qty-controls">
                             <button
                               type="button"
@@ -1229,13 +1499,12 @@ function GuestMenuPage() {
 
                                 const currentSelected = current.selectedOptionsByGroup[group.id] ?? {};
                                 let nextSelected: Record<string, number>;
-                                const currentIncludedCount = getIncludedSelectionCount(options, currentSelected);
+                                const currentIncludedCount = getIncludedSelectionCount(group.id, currentSelected);
 
                                 if (useRadio) {
                                   const paidSelections: Record<string, number> = {};
                                   for (const [selectedOptionId, quantity] of Object.entries(currentSelected)) {
-                                    const selectedOption = MODIFIER_OPTION_BY_ID.get(selectedOptionId);
-                                    if (selectedOption && selectedOption.priceDeltaCents > 0 && quantity > 0) {
+                                    if (isPaidModifierOptionId(selectedOptionId) && quantity > 0) {
                                       paidSelections[selectedOptionId] = quantity;
                                     }
                                   }
@@ -1250,7 +1519,7 @@ function GuestMenuPage() {
                                 } else if (max === 1) {
                                   nextSelected = { ...currentSelected };
                                   for (const candidate of options) {
-                                    if (candidate.priceDeltaCents <= 0) {
+                                    if (isIncludedModifierOption(group.id, candidate.id)) {
                                       delete nextSelected[candidate.id];
                                     }
                                   }
@@ -1266,7 +1535,7 @@ function GuestMenuPage() {
                                     validationError: t(
                                       "error.modifier_limit",
                                       "Select up to {count} option(s) for {group}.",
-                                      { count: max, group: getModifierGroupName(group, t) },
+                                      { count: max, group: getModifierGroupName(group, t, locale) },
                                     ),
                                   };
                                 }
@@ -1283,7 +1552,7 @@ function GuestMenuPage() {
                             );
                           }}
                         />
-                        {`${getModifierOptionName(option, t)}${deltaLabel}`}
+                        {`${getModifierOptionName(option, t, locale)}${deltaLabel}`}
                       </label>
                     );
                   })}
@@ -1296,7 +1565,12 @@ function GuestMenuPage() {
               <button
                 className="button"
                 onClick={() => {
-                  const validationError = validateConfigSelection(config.item, config.selectedOptionsByGroup);
+                  const validationError = validateItemConfiguration(
+                    config.item,
+                    config.selectedOptionsByGroup,
+                    t,
+                    locale,
+                  );
                   if (validationError) {
                     setConfig((current) => (current ? { ...current, validationError } : current));
                     return;
@@ -1323,7 +1597,7 @@ function GuestMenuPage() {
 }
 
 function GuestCartPage() {
-  const { t, formatMoney, formatDateTime } = useI18n();
+  const { t, formatMoney, formatDateTime, locale } = useI18n();
   const { locationToken = "" } = useParams();
   const navigate = useNavigate();
   const location = findLocationByToken(locationToken);
@@ -1339,7 +1613,7 @@ function GuestCartPage() {
     return <Navigate to="/" replace />;
   }
 
-  const locationSpot = getLocationSpotLabel(location, t);
+  const locationSpot = getLocationSpotLabel(location, t, locale);
   const totals = calculateTotals(lines);
 
   const removeLine = (id: string) => {
@@ -1362,6 +1636,7 @@ function GuestCartPage() {
 
     const message = buildOrderMessage({
       t,
+      locale,
       formatMoney,
       formatDateTime,
       location,
@@ -1421,8 +1696,8 @@ function GuestCartPage() {
       <section className="panel">
         {lines.length === 0 ? <p>{t("screen.cart.empty", "Your cart is empty.")}</p> : null}
         {lines.map((line) => {
-          const itemName = getLineItemName(line, t);
-          const modifierLabel = getLineModifierLabel(line, t);
+          const itemName = getLineItemName(line, t, locale);
+          const modifierLabel = getLineModifierLabel(line, t, locale);
 
           return (
             <article key={line.id} className="line-item">
@@ -1498,7 +1773,7 @@ function GuestCartPage() {
 }
 
 function GuestSentPage() {
-  const { t, formatDateTime } = useI18n();
+  const { t, formatDateTime, locale } = useI18n();
   const { locationToken = "" } = useParams();
   const navigate = useNavigate();
   const routerLocation = useLocation();
@@ -1510,7 +1785,7 @@ function GuestSentPage() {
     return <Navigate to="/" replace />;
   }
 
-  const locationSpot = getLocationSpotLabel(location, t);
+  const locationSpot = getLocationSpotLabel(location, t, locale);
   const sentAt = sentState?.sentAtIso ? new Date(sentState.sentAtIso) : null;
 
   return (
