@@ -1005,12 +1005,12 @@
     "categories": [
       {
         "id": "cat_drinks",
-        "name": "Drinks",
+        "name": "Beverages",
         "sortOrder": 1
       },
       {
         "id": "cat_cocktails",
-        "name": "Cocktails",
+        "name": "Drinks",
         "sortOrder": 2
       },
       {
@@ -1020,12 +1020,12 @@
       },
       {
         "id": "cat_sandwiches",
-        "name": "Sandwiches",
+        "name": "Meals",
         "sortOrder": 4
       },
       {
         "id": "cat_quick_bites",
-        "name": "Quick Bites",
+        "name": "Light Bites",
         "sortOrder": 5
       }
     ],
@@ -1616,7 +1616,7 @@
         "modifierGroupIds": [
           "mg_addons"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.pexels.com/photos/34438035/pexels-photo-34438035.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
       },
       {
         "id": "item_acai_bowl",
@@ -1628,7 +1628,7 @@
         "modifierGroupIds": [
           "mg_acai_toppings"
         ],
-        "imageUrl": "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.pexels.com/photos/5232938/pexels-photo-5232938.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
       },
       {
         "id": "item_fruit_salad",
@@ -1638,7 +1638,7 @@
         "basePriceCents": 1600,
         "available": true,
         "modifierGroupIds": [],
-        "imageUrl": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&auto=format"
+        "imageUrl": "https://images.pexels.com/photos/19453404/pexels-photo-19453404.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1"
       }
     ]
   },
