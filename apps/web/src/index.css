@@ -270,6 +270,17 @@ h3 {
   border-bottom: 1px solid var(--border-light);
 }
 
+.brand-logo-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+}
+
+.brand-logo-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
 .brand-text {
   display: flex;
   flex-direction: column;
@@ -628,6 +639,41 @@ h3 {
 
 .option-row + .option-row {
   border-top: 1px solid var(--divider);
+}
+
+.option-row-quantity {
+  justify-content: space-between;
+}
+
+.qty-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.qty-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.qty-value {
+  min-width: 18px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .option-row input[type="radio"] {

@@ -42,6 +42,11 @@ type MenuItem = {
   imageUrl?: string;
 };
 
+type ModifierSelection = {
+  optionId: string;
+  quantity: number;
+};
+
 type CartLine = {
   id: string;
   menuItemId: string;
@@ -50,13 +55,13 @@ type CartLine = {
   unitPriceCents: number;
   lineTotalCents: number;
   notes?: string;
-  modifierOptionIds: string[];
+  modifierSelections: ModifierSelection[];
   modifierLabel: string;
 };
 
 type ConfigState = {
   item: MenuItem;
-  selectedOptionsByGroup: Record<string, string[]>;
+  selectedOptionsByGroup: Record<string, Record<string, number>>;
   validationError: string | null;
 };
 
@@ -162,6 +167,113 @@ function localGet<T>(key: string): T | null {
 
 function localSet(key: string, value: unknown): void {
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+function normalizeModifierSelections(raw: unknown): ModifierSelection[] {
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  if (raw.every((value) => typeof value === "string")) {
+    const quantitiesByOption: Record<string, number> = {};
+    for (const optionId of raw) {
+      quantitiesByOption[optionId] = (quantitiesByOption[optionId] ?? 0) + 1;
+    }
+
+    return Object.entries(quantitiesByOption)
+      .map(([optionId, quantity]) => ({ optionId, quantity }))
+      .sort((a, b) => a.optionId.localeCompare(b.optionId));
+  }
+
+  const normalized: ModifierSelection[] = [];
+  for (const value of raw) {
+    if (typeof value !== "object" || value === null) {
+      continue;
+    }
+
+    const candidate = value as { optionId?: unknown; quantity?: unknown };
+    if (typeof candidate.optionId !== "string") {
+      continue;
+    }
+
+    const quantity =
+      typeof candidate.quantity === "number" && Number.isFinite(candidate.quantity)
+        ? Math.max(1, Math.floor(candidate.quantity))
+        : 1;
+    normalized.push({ optionId: candidate.optionId, quantity });
+  }
+
+  const mergedByOption: Record<string, number> = {};
+  for (const selection of normalized) {
+    mergedByOption[selection.optionId] = (mergedByOption[selection.optionId] ?? 0) + selection.quantity;
+  }
+
+  return Object.entries(mergedByOption)
+    .map(([optionId, quantity]) => ({ optionId, quantity }))
+    .sort((a, b) => a.optionId.localeCompare(b.optionId));
+}
+
+function loadCartLines(locationToken: string): CartLine[] {
+  const raw = localGet<unknown[]>(cartKey(locationToken));
+  if (!Array.isArray(raw)) {
+    return [];
+  }
+
+  const normalized: CartLine[] = [];
+  for (const value of raw) {
+    if (typeof value !== "object" || value === null) {
+      continue;
+    }
+
+    const line = value as {
+      id?: unknown;
+      menuItemId?: unknown;
+      itemNameSnapshot?: unknown;
+      quantity?: unknown;
+      unitPriceCents?: unknown;
+      lineTotalCents?: unknown;
+      notes?: unknown;
+      modifierSelections?: unknown;
+      modifierOptionIds?: unknown;
+      modifierLabel?: unknown;
+    };
+
+    if (typeof line.menuItemId !== "string") {
+      continue;
+    }
+
+    const quantity =
+      typeof line.quantity === "number" && Number.isFinite(line.quantity)
+        ? Math.max(1, Math.floor(line.quantity))
+        : 1;
+    const unitPriceCents =
+      typeof line.unitPriceCents === "number" && Number.isFinite(line.unitPriceCents)
+        ? Math.max(0, Math.round(line.unitPriceCents))
+        : 0;
+    const lineTotalCents =
+      typeof line.lineTotalCents === "number" && Number.isFinite(line.lineTotalCents)
+        ? Math.max(0, Math.round(line.lineTotalCents))
+        : unitPriceCents * quantity;
+
+    normalized.push({
+      id: typeof line.id === "string" ? line.id : crypto.randomUUID(),
+      menuItemId: line.menuItemId,
+      itemNameSnapshot:
+        typeof line.itemNameSnapshot === "string" ? line.itemNameSnapshot : line.menuItemId,
+      quantity,
+      unitPriceCents,
+      lineTotalCents,
+      notes: typeof line.notes === "string" ? line.notes : undefined,
+      modifierSelections: normalizeModifierSelections(line.modifierSelections ?? line.modifierOptionIds),
+      modifierLabel: typeof line.modifierLabel === "string" ? line.modifierLabel : "",
+    });
+  }
+
+  return normalized;
+}
+
+function saveCartLines(locationToken: string, lines: CartLine[]): void {
+  localSet(cartKey(locationToken), lines);
 }
 
 function isSupportedLocale(value: string): value is LocaleCode {
@@ -300,16 +412,24 @@ function getLineItemName(line: CartLine, t: TranslateFn): string {
   return item ? getMenuItemName(item, t) : line.itemNameSnapshot;
 }
 
-function buildModifierLabel(optionIds: string[], t: TranslateFn): string {
-  return optionIds
-    .map((id) => MODIFIER_OPTION_BY_ID.get(id))
-    .filter((option): option is ModifierOption => Boolean(option))
-    .map((option) => getModifierOptionName(option, t))
+function buildModifierLabel(selections: ModifierSelection[], t: TranslateFn): string {
+  return selections
+    .slice()
+    .sort((a, b) => a.optionId.localeCompare(b.optionId))
+    .map((selection) => {
+      const option = MODIFIER_OPTION_BY_ID.get(selection.optionId);
+      if (!option) {
+        return null;
+      }
+      const name = getModifierOptionName(option, t);
+      return selection.quantity > 1 ? `${selection.quantity}x ${name}` : name;
+    })
+    .filter((label): label is string => Boolean(label))
     .join(", ");
 }
 
 function getLineModifierLabel(line: CartLine, t: TranslateFn): string {
-  const translated = buildModifierLabel(line.modifierOptionIds, t);
+  const translated = buildModifierLabel(line.modifierSelections, t);
   return translated || line.modifierLabel;
 }
 
@@ -342,8 +462,42 @@ function getSelectionBounds(group: ModifierGroup): { min: number; max: number } 
   return { min, max };
 }
 
-function flattenSelectedOptionsByGroup(selectedOptionsByGroup: Record<string, string[]>): string[] {
-  return Object.values(selectedOptionsByGroup).flat();
+function getIncludedSelectionCount(
+  options: ModifierOption[],
+  selectedQuantitiesByOption: Record<string, number>,
+): number {
+  const includedOptionIds = new Set(
+    options.filter((option) => option.priceDeltaCents <= 0).map((option) => option.id),
+  );
+
+  return Object.entries(selectedQuantitiesByOption).filter(
+    ([optionId, quantity]) => quantity > 0 && includedOptionIds.has(optionId),
+  ).length;
+}
+
+function flattenSelectedOptionsByGroup(
+  selectedOptionsByGroup: Record<string, Record<string, number>>,
+): ModifierSelection[] {
+  return Object.values(selectedOptionsByGroup)
+    .flatMap((groupSelections) =>
+      Object.entries(groupSelections).map(([optionId, quantity]) => ({
+        optionId,
+        quantity,
+      })),
+    )
+    .filter((selection) => selection.quantity > 0)
+    .map((selection) => ({
+      optionId: selection.optionId,
+      quantity: Math.max(1, Math.floor(selection.quantity)),
+    }));
+}
+
+function lineSignature(menuItemId: string, selections: ModifierSelection[]): string {
+  const parts = selections
+    .slice()
+    .sort((a, b) => a.optionId.localeCompare(b.optionId))
+    .map((selection) => `${selection.optionId}:${selection.quantity}`);
+  return [menuItemId, ...parts].join("|");
 }
 
 function buildOrderMessage(input: {
@@ -566,7 +720,9 @@ function Screen(props: { title: string; subtitle?: string; children: ReactNode }
   return (
     <main className="screen">
       <div className="brand-bar">
-        <img className="brand-logo" src="/logo.png" alt={brandLogoAlt} />
+        <Link to="/" className="brand-logo-link" aria-label={t("action.back_start", "Back to start")}>
+          <img className="brand-logo" src="/logo.png" alt={brandLogoAlt} />
+        </Link>
         <div className="brand-text">
           <span className="brand-name">{brandName}</span>
           <span className="brand-tagline">{brandTagline}</span>
@@ -732,7 +888,7 @@ function GuestMenuPage() {
   const [activeCategoryId, setActiveCategoryId] = useState<string>(MENU_CATEGORIES[0]?.id ?? "");
   const [config, setConfig] = useState<ConfigState | null>(null);
   const [cartCount, setCartCount] = useState<number>(() => {
-    const cart = localGet<CartLine[]>(cartKey(locationToken)) ?? [];
+    const cart = loadCartLines(locationToken);
     return cart.reduce((count, line) => count + line.quantity, 0);
   });
   const [toastText, setToastText] = useState<string | null>(null);
@@ -752,17 +908,26 @@ function GuestMenuPage() {
   const items = MENU_ITEMS.filter((item) => item.categoryId === activeCategoryId);
 
   const openConfigurator = (item: MenuItem) => {
-    const defaults: Record<string, string[]> = {};
+    const defaults: Record<string, Record<string, number>> = {};
     for (const groupId of item.modifierGroupIds) {
       const group = MODIFIER_GROUP_BY_ID.get(groupId);
       if (!group) {
-        defaults[groupId] = [];
+        defaults[groupId] = {};
         continue;
       }
 
       const options = getOptionsForGroup(groupId);
       const { min } = getSelectionBounds(group);
-      defaults[groupId] = options.slice(0, Math.min(min, options.length)).map((option) => option.id);
+      const includedOptions = options.filter((option) => option.priceDeltaCents <= 0);
+      const defaultOptions = (includedOptions.length > 0 ? includedOptions : options).slice(
+        0,
+        Math.min(min, options.length),
+      );
+
+      defaults[groupId] = defaultOptions.reduce<Record<string, number>>((map, option) => {
+        map[option.id] = 1;
+        return map;
+      }, {});
     }
 
     setConfig({ item, selectedOptionsByGroup: defaults, validationError: null });
@@ -770,7 +935,7 @@ function GuestMenuPage() {
 
   const validateConfigSelection = (
     item: MenuItem,
-    selectedOptionsByGroup: Record<string, string[]>,
+    selectedOptionsByGroup: Record<string, Record<string, number>>,
   ): string | null => {
     for (const groupId of item.modifierGroupIds) {
       const group = MODIFIER_GROUP_BY_ID.get(groupId);
@@ -779,12 +944,13 @@ function GuestMenuPage() {
       }
 
       const options = getOptionsForGroup(groupId);
-      const optionIds = new Set(options.map((option) => option.id));
-      const selectedOptionIds = (selectedOptionsByGroup[groupId] ?? []).filter((id) => optionIds.has(id));
       const { min, max } = getSelectionBounds(group);
       const groupName = getModifierGroupName(group, t);
+      const selectedQuantitiesByOption = selectedOptionsByGroup[groupId] ?? {};
+      const includedOptions = options.filter((option) => option.priceDeltaCents <= 0);
+      const includedSelectedCount = getIncludedSelectionCount(options, selectedQuantitiesByOption);
 
-      if (options.length < min) {
+      if (includedOptions.length < min) {
         return t(
           "error.modifier_unavailable",
           "This item is temporarily unavailable. Required options for {group} are missing.",
@@ -792,14 +958,14 @@ function GuestMenuPage() {
         );
       }
 
-      if (selectedOptionIds.length < min) {
+      if (includedSelectedCount < min) {
         return t("error.modifier_required", "Select at least {count} option(s) for {group}.", {
           count: min,
           group: groupName,
         });
       }
 
-      if (selectedOptionIds.length > max) {
+      if (includedSelectedCount > max) {
         return t("error.modifier_limit", "Select up to {count} option(s) for {group}.", {
           count: max,
           group: groupName,
@@ -810,30 +976,40 @@ function GuestMenuPage() {
     return null;
   };
 
-  const addToCart = (item: MenuItem, optionIds: string[]) => {
+  const addToCart = (item: MenuItem, selections: ModifierSelection[]) => {
     if (!item.available) {
       return;
     }
 
-    const normalizedOptionIds = Array.from(new Set(optionIds));
+    const normalizedSelections = selections
+      .filter((selection) => MODIFIER_OPTION_BY_ID.has(selection.optionId))
+      .map((selection) => ({
+        optionId: selection.optionId,
+        quantity: Math.max(1, Math.floor(selection.quantity)),
+      }))
+      .sort((a, b) => a.optionId.localeCompare(b.optionId));
 
-    const modifierDelta = MODIFIER_OPTIONS
-      .filter((option) => normalizedOptionIds.includes(option.id))
-      .reduce((sum, option) => sum + option.priceDeltaCents, 0);
+    const modifierDelta = normalizedSelections.reduce((sum, selection) => {
+      const option = MODIFIER_OPTION_BY_ID.get(selection.optionId);
+      if (!option) {
+        return sum;
+      }
+      return sum + option.priceDeltaCents * selection.quantity;
+    }, 0);
 
     const unitPrice = item.basePriceCents + modifierDelta;
-    const existing = localGet<CartLine[]>(cartKey(locationToken)) ?? [];
-    const signature = [item.id, ...normalizedOptionIds.slice().sort()].join("|");
+    const existing = loadCartLines(locationToken);
+    const signature = lineSignature(item.id, normalizedSelections);
 
     const existingLine = existing.find(
-      (line) => [line.menuItemId, ...line.modifierOptionIds.slice().sort()].join("|") === signature,
+      (line) => lineSignature(line.menuItemId, line.modifierSelections) === signature,
     );
 
     if (existingLine) {
       existingLine.quantity += 1;
       existingLine.lineTotalCents = existingLine.quantity * existingLine.unitPriceCents;
       existingLine.itemNameSnapshot = getMenuItemName(item, t);
-      existingLine.modifierLabel = buildModifierLabel(normalizedOptionIds, t);
+      existingLine.modifierLabel = buildModifierLabel(normalizedSelections, t);
     } else {
       existing.push({
         id: crypto.randomUUID(),
@@ -842,12 +1018,12 @@ function GuestMenuPage() {
         quantity: 1,
         unitPriceCents: unitPrice,
         lineTotalCents: unitPrice,
-        modifierOptionIds: normalizedOptionIds,
-        modifierLabel: buildModifierLabel(normalizedOptionIds, t),
+        modifierSelections: normalizedSelections,
+        modifierLabel: buildModifierLabel(normalizedSelections, t),
       });
     }
 
-    localSet(cartKey(locationToken), existing);
+    saveCartLines(locationToken, existing);
     setCartCount(existing.reduce((count, line) => count + line.quantity, 0));
     setConfig(null);
 
@@ -946,9 +1122,10 @@ function GuestMenuPage() {
                 return null;
               }
               const options = getOptionsForGroup(groupId);
-              const selectedOptionIds = config.selectedOptionsByGroup[group.id] ?? [];
+              const selectedQuantitiesByOption = config.selectedOptionsByGroup[group.id] ?? {};
               const { min, max } = getSelectionBounds(group);
               const useRadio = min === 1 && max === 1;
+              const includedSelectedCount = getIncludedSelectionCount(options, selectedQuantitiesByOption);
 
               return (
                 <fieldset key={group.id} className="fieldset">
@@ -956,9 +1133,85 @@ function GuestMenuPage() {
                   {options.map((option) => {
                     const delta = option.priceDeltaCents;
                     const deltaLabel = delta === 0 ? "" : ` (${delta > 0 ? "+" : ""}${formatMoney(delta)})`;
-                    const isSelected = selectedOptionIds.includes(option.id);
+                    const isPaidExtra = option.priceDeltaCents > 0;
+                    const selectedQuantity = selectedQuantitiesByOption[option.id] ?? 0;
+                    const isSelected = selectedQuantity > 0;
                     const disableBecauseMaxReached =
-                      !useRadio && max > 1 && selectedOptionIds.length >= max && !isSelected;
+                      !isPaidExtra && !useRadio && max > 1 && includedSelectedCount >= max && !isSelected;
+
+                    if (isPaidExtra) {
+                      return (
+                        <div key={option.id} className="option-row option-row-quantity">
+                          <span>{`${getModifierOptionName(option, t)}${deltaLabel}`}</span>
+                          <div className="qty-controls">
+                            <button
+                              type="button"
+                              className="qty-button"
+                              disabled={selectedQuantity === 0}
+                              onClick={() => {
+                                setConfig((current) => {
+                                  if (!current) {
+                                    return current;
+                                  }
+
+                                  const currentGroupSelections = current.selectedOptionsByGroup[group.id] ?? {};
+                                  const currentQuantity = currentGroupSelections[option.id] ?? 0;
+                                  const nextQuantity = Math.max(0, currentQuantity - 1);
+                                  const nextGroupSelections = { ...currentGroupSelections };
+
+                                  if (nextQuantity === 0) {
+                                    delete nextGroupSelections[option.id];
+                                  } else {
+                                    nextGroupSelections[option.id] = nextQuantity;
+                                  }
+
+                                  return {
+                                    ...current,
+                                    validationError: null,
+                                    selectedOptionsByGroup: {
+                                      ...current.selectedOptionsByGroup,
+                                      [group.id]: nextGroupSelections,
+                                    },
+                                  };
+                                });
+                              }}
+                            >
+                              -
+                            </button>
+                            <span className="qty-value">{selectedQuantity}</span>
+                            <button
+                              type="button"
+                              className="qty-button"
+                              onClick={() => {
+                                setConfig((current) => {
+                                  if (!current) {
+                                    return current;
+                                  }
+
+                                  const currentGroupSelections = current.selectedOptionsByGroup[group.id] ?? {};
+                                  const currentQuantity = currentGroupSelections[option.id] ?? 0;
+                                  const nextGroupSelections = {
+                                    ...currentGroupSelections,
+                                    [option.id]: currentQuantity + 1,
+                                  };
+
+                                  return {
+                                    ...current,
+                                    validationError: null,
+                                    selectedOptionsByGroup: {
+                                      ...current.selectedOptionsByGroup,
+                                      [group.id]: nextGroupSelections,
+                                    },
+                                  };
+                                });
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    }
 
                     return (
                       <label key={option.id} className="option-row">
@@ -974,17 +1227,39 @@ function GuestMenuPage() {
                                   return current;
                                 }
 
-                                const currentSelected = current.selectedOptionsByGroup[group.id] ?? [];
-                                let nextSelected: string[];
+                                const currentSelected = current.selectedOptionsByGroup[group.id] ?? {};
+                                let nextSelected: Record<string, number>;
+                                const currentIncludedCount = getIncludedSelectionCount(options, currentSelected);
 
                                 if (useRadio) {
-                                  nextSelected = [option.id];
-                                } else if (currentSelected.includes(option.id)) {
-                                  nextSelected = currentSelected.filter((id) => id !== option.id);
+                                  const paidSelections: Record<string, number> = {};
+                                  for (const [selectedOptionId, quantity] of Object.entries(currentSelected)) {
+                                    const selectedOption = MODIFIER_OPTION_BY_ID.get(selectedOptionId);
+                                    if (selectedOption && selectedOption.priceDeltaCents > 0 && quantity > 0) {
+                                      paidSelections[selectedOptionId] = quantity;
+                                    }
+                                  }
+
+                                  nextSelected = {
+                                    ...paidSelections,
+                                    [option.id]: 1,
+                                  };
+                                } else if ((currentSelected[option.id] ?? 0) > 0) {
+                                  nextSelected = { ...currentSelected };
+                                  delete nextSelected[option.id];
                                 } else if (max === 1) {
-                                  nextSelected = [option.id];
-                                } else if (currentSelected.length < max) {
-                                  nextSelected = [...currentSelected, option.id];
+                                  nextSelected = { ...currentSelected };
+                                  for (const candidate of options) {
+                                    if (candidate.priceDeltaCents <= 0) {
+                                      delete nextSelected[candidate.id];
+                                    }
+                                  }
+                                  nextSelected[option.id] = 1;
+                                } else if (currentIncludedCount < max) {
+                                  nextSelected = {
+                                    ...currentSelected,
+                                    [option.id]: 1,
+                                  };
                                 } else {
                                   return {
                                     ...current,
@@ -1053,7 +1328,7 @@ function GuestCartPage() {
   const navigate = useNavigate();
   const location = findLocationByToken(locationToken);
 
-  const [lines, setLines] = useState<CartLine[]>(() => localGet<CartLine[]>(cartKey(locationToken)) ?? []);
+  const [lines, setLines] = useState<CartLine[]>(() => loadCartLines(locationToken));
   const [notes, setNotes] = useState("");
   const [allergyNotes, setAllergyNotes] = useState("");
   const [errorKey, setErrorKey] = useState<"cart_empty" | "send_failed" | null>(null);
@@ -1070,7 +1345,7 @@ function GuestCartPage() {
   const removeLine = (id: string) => {
     const nextLines = lines.filter((line) => line.id !== id);
     setLines(nextLines);
-    localSet(cartKey(locationToken), nextLines);
+    saveCartLines(locationToken, nextLines);
   };
 
   const sendOrder = async () => {
