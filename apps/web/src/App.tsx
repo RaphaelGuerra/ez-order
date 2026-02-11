@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import configData from "./config/order-config.json";
@@ -149,6 +150,8 @@ let MODIFIER_OPTION_BY_ID = new Map<string, ModifierOption>();
 let MODIFIER_OPTIONS_BY_GROUP = new Map<string, ModifierOption[]>();
 let INCLUDED_MODIFIER_OPTIONS_BY_GROUP = new Map<string, ModifierOption[]>();
 let INCLUDED_MODIFIER_OPTION_IDS_BY_GROUP = new Map<string, Set<string>>();
+let RUNTIME_CONFIG_REVISION = 0;
+const RUNTIME_CONFIG_LISTENERS = new Set<() => void>();
 
 const EMPTY_MODIFIER_OPTIONS: ModifierOption[] = [];
 const EMPTY_MODIFIER_OPTION_IDS = new Set<string>();
@@ -473,6 +476,23 @@ function rebuildConfigIndexes(config: AppConfig): void {
   );
 }
 
+function notifyRuntimeConfigListeners(): void {
+  for (const listener of RUNTIME_CONFIG_LISTENERS) {
+    listener();
+  }
+}
+
+function subscribeRuntimeConfig(listener: () => void): () => void {
+  RUNTIME_CONFIG_LISTENERS.add(listener);
+  return () => {
+    RUNTIME_CONFIG_LISTENERS.delete(listener);
+  };
+}
+
+function getRuntimeConfigRevision(): number {
+  return RUNTIME_CONFIG_REVISION;
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 export function setRuntimeConfig(nextConfig: AppConfig): void {
   if (!isValidAppConfig(nextConfig)) {
@@ -482,16 +502,13 @@ export function setRuntimeConfig(nextConfig: AppConfig): void {
 
   APP_CONFIG = nextConfig;
   rebuildConfigIndexes(nextConfig);
-
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new Event(RUNTIME_CONFIG_UPDATED_EVENT));
-  }
+  RUNTIME_CONFIG_REVISION += 1;
+  notifyRuntimeConfigListeners();
 }
 
 rebuildConfigIndexes(APP_CONFIG);
 
 const CART_PREFIX = "ez-order:cart:";
-export const RUNTIME_CONFIG_UPDATED_EVENT = "ez-order:config-updated";
 const I18nContext = createContext<I18nContextValue | null>(null);
 const MAX_FREE_TEXT_LENGTH = 280;
 const NOTIFY_REQUEST_TIMEOUT_MS = 12_000;
@@ -1130,22 +1147,7 @@ function GuestCartRoute() {
 
 function App() {
   const [locale, setLocale] = useState<LocaleCode>(() => detectInitialLocale());
-  const [, bumpConfigRevision] = useState(0);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const handleRuntimeConfigUpdated = () => {
-      bumpConfigRevision((current) => current + 1);
-    };
-
-    window.addEventListener(RUNTIME_CONFIG_UPDATED_EVENT, handleRuntimeConfigUpdated);
-    return () => {
-      window.removeEventListener(RUNTIME_CONFIG_UPDATED_EVENT, handleRuntimeConfigUpdated);
-    };
-  }, []);
+  useSyncExternalStore(subscribeRuntimeConfig, getRuntimeConfigRevision, getRuntimeConfigRevision);
 
   useEffect(() => {
     localSet(LOCALE_STORAGE_KEY, locale);
@@ -1908,6 +1910,32 @@ function GuestCartPage() {
     saveCartLines(locationToken, nextLines);
   };
 
+  const getNotifyAuthToken = async (): Promise<string | null> => {
+    try {
+      const response = await fetch(`/api/notify?locationToken=${encodeURIComponent(location.token)}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+      if (!response.ok) {
+        return null;
+      }
+
+      const payload: unknown = await response.json();
+      if (!isObjectRecord(payload)) {
+        return null;
+      }
+
+      const authToken = payload.authToken;
+      if (typeof authToken !== "string" || !authToken.trim()) {
+        return null;
+      }
+
+      return authToken.trim();
+    } catch {
+      return null;
+    }
+  };
+
   const sendOrder = async () => {
     if (sendingRef.current) {
       return;
@@ -1933,6 +1961,11 @@ function GuestCartPage() {
     });
 
     const title = waiterT("order.push_title", "Novo pedido: {spot}", { spot: waiterLocationSpot });
+    const authToken = await getNotifyAuthToken();
+    if (!authToken) {
+      setErrorKey("send_failed");
+      return;
+    }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), NOTIFY_REQUEST_TIMEOUT_MS);
@@ -1943,7 +1976,7 @@ function GuestCartPage() {
       const res = await fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, message }),
+        body: JSON.stringify({ title, message, locationToken: location.token, authToken }),
         signal: controller.signal,
       });
 

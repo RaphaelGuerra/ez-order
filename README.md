@@ -33,6 +33,8 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
      - `ALLOWED_ORIGINS` — comma-separated origin allowlist for `/api/notify` (defaults to same origin only)
      - `NOTIFY_RATE_LIMIT_PER_MINUTE` — per-IP notify request limit (default: `8`)
      - `PUSHOVER_TIMEOUT_MS` — outbound timeout to Pushover (default: `8000`)
+     - `NOTIFY_AUTH_TTL_SECONDS` — signed auth token TTL for notify requests (default: `600`)
+     - `NOTIFY_SIGNING_SECRET` — optional explicit signing secret for notify auth tokens (if omitted, derives from Pushover secrets)
 3. Start app:
    ```bash
    npm run dev
@@ -131,6 +133,7 @@ The app resolves these fields using the active locale (`en`, `pt-BR`, `fr`, `es`
 
 ## Notes
 - Order is sent server-side via Pushover — no manual step required from the guest.
+- `POST /api/notify` now requires a short-lived signed auth token issued by `GET /api/notify?locationToken=...`.
 - The cart is cleared automatically when the notification is confirmed sent.
 - Allergy/notes text is included in the push notification message but not persisted locally.
 - Pushover credentials are server-side only (never exposed to the browser).
