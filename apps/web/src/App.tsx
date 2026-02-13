@@ -1563,6 +1563,7 @@ function GuestMenuPage() {
   };
 
   return (
+    <>
     <Screen title={t("screen.menu.title", "Menu")} subtitle={`${locationZone} · ${locationSpot}`}>
       <div className="category-tabs-shell">
         <button
@@ -1633,6 +1634,7 @@ function GuestMenuPage() {
           ))
         )}
       </section>
+    </Screen>
 
       <footer className="sticky-footer">
         <button className="button" onClick={() => navigate(`/g/${location.token}/cart`)}>
@@ -1871,7 +1873,7 @@ function GuestMenuPage() {
       <div role="status" aria-live="polite">
         {toastText ? <div className="toast">{toastText}</div> : null}
       </div>
-    </Screen>
+    </>
   );
 }
 
