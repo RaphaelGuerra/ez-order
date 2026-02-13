@@ -550,7 +550,18 @@ function localGet<T>(key: string): T | null {
 }
 
 function localSet(key: string, value: unknown): void {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Safari private browsing or quota exceeded — silently fail
+  }
+}
+
+function generateId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return generateId();
+  }
+  return Date.now().toString(36) + Math.random().toString(36).substring(2, 10);
 }
 
 function normalizeModifierSelections(raw: unknown): ModifierSelection[] {
@@ -640,7 +651,7 @@ function loadCartLines(locationToken: string): CartLine[] {
         : unitPriceCents * quantity;
 
     normalized.push({
-      id: typeof line.id === "string" ? line.id : crypto.randomUUID(),
+      id: typeof line.id === "string" ? line.id : generateId(),
       menuItemId: line.menuItemId,
       itemNameSnapshot:
         typeof line.itemNameSnapshot === "string" ? line.itemNameSnapshot : line.menuItemId,
@@ -1005,7 +1016,7 @@ function upsertCartLine(
   }
 
   lines.push({
-    id: crypto.randomUUID(),
+    id: generateId(),
     menuItemId: item.id,
     itemNameSnapshot,
     quantity: 1,
@@ -1987,7 +1998,7 @@ function GuestCartPage() {
         return;
       }
 
-      localStorage.removeItem(cartKey(locationToken));
+      try { localStorage.removeItem(cartKey(locationToken)); } catch { /* private browsing */ }
       navigate(`/g/${locationToken}/sent`, {
         state: {
           sentAtIso: new Date().toISOString(),
