@@ -559,8 +559,15 @@ function localSet(key: string, value: unknown): void {
 
 function generateId(): string {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return generateId();
+    return crypto.randomUUID();
   }
+
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    const bytes = new Uint8Array(12);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
+  }
+
   return Date.now().toString(36) + Math.random().toString(36).substring(2, 10);
 }
 

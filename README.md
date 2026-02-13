@@ -35,6 +35,7 @@ Mobile-first QR ordering flow where the waiter is alerted via Pushover push noti
      - `PUSHOVER_TIMEOUT_MS` — outbound timeout to Pushover (default: `8000`)
      - `NOTIFY_AUTH_TTL_SECONDS` — signed auth token TTL for notify requests (default: `600`)
      - `NOTIFY_SIGNING_SECRET` — optional explicit signing secret for notify auth tokens (if omitted, derives from Pushover secrets)
+     - `NOTIFY_ALLOWED_LOCATION_TOKENS` — optional comma-separated allowlist of valid location tokens. If omitted, `/api/notify` validates against `/catalog/order-config.json`.
 3. Start app:
    ```bash
    npm run dev
@@ -134,11 +135,13 @@ The app resolves these fields using the active locale (`en`, `pt-BR`, `fr`, `es`
 ## Notes
 - Order is sent server-side via Pushover — no manual step required from the guest.
 - `POST /api/notify` now requires a short-lived signed auth token issued by `GET /api/notify?locationToken=...`.
+- Auth tokens are single-use and bound to a short-lived server session cookie + client fingerprint to reduce replay/spoofing.
 - The cart is cleared automatically when the notification is confirmed sent.
 - Allergy/notes text is included in the push notification message but not persisted locally.
 - Pushover credentials are server-side only (never exposed to the browser).
 - Waiter push notifications are always generated in Portuguese (pt-BR) for operational consistency.
 - `/api/notify` enforces origin checks (allowlist), request validation, per-IP rate limiting, and timeout protection.
+- `/api/notify` validates `locationToken` against an allowlist (`NOTIFY_ALLOWED_LOCATION_TOKENS` or runtime catalog) before issuing/sending notifications.
 - Multilingual guest UI is built in (`English`, `Português (Brasil)`, `Français`, `Español`).
 - Language defaults to `Português (Brasil)`, can be changed from the top selector on each screen, and is saved in browser storage.
 - Runtime catalog loading is non-blocking: the app starts with bundled fallback and applies runtime catalog when it arrives.
