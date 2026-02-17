@@ -1,5 +1,28 @@
 # EZ-Order (Push Notification Mode)
 
+Last updated: 2026-02-17
+
+## Table of Contents
+
+<!-- TOC start -->
+- [How It Works](#how-it-works)
+- [Workspace Layout](#workspace-layout)
+- [Quick Start](#quick-start)
+- [Build](#build)
+- [Runtime Catalog (Phase 1)](#runtime-catalog-phase-1)
+  - [Non-Developer Update Flow](#non-developer-update-flow)
+  - [Validation](#validation)
+- [Runtime Catalog (Phase 2: Localized Content)](#runtime-catalog-phase-2-localized-content)
+  - [What this changes operationally](#what-this-changes-operationally)
+  - [Required locale keys in catalog](#required-locale-keys-in-catalog)
+- [Web Routes](#web-routes)
+- [Seeded Table Setup](#seeded-table-setup)
+  - [Manual Table Codes](#manual-table-codes)
+  - [Area Distribution](#area-distribution)
+  - [Legacy/Special Spots Kept](#legacyspecial-spots-kept)
+- [Notes](#notes)
+<!-- TOC end -->
+
 Mobile-first QR ordering flow where the waiter is alerted via Pushover push notifications.
 
 ## How It Works
