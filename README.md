@@ -1,6 +1,6 @@
 # EZ-Order (Push Notification Mode)
 
-Last updated: 2026-02-21
+Last updated: 2026-02-24
 
 ## Table of Contents
 
@@ -12,6 +12,7 @@ Last updated: 2026-02-21
 - [Runtime Catalog (Phase 1)](#runtime-catalog-phase-1)
   - [Non-Developer Update Flow](#non-developer-update-flow)
   - [Validation](#validation)
+  - [Fallback Sync](#fallback-sync)
 - [Runtime Catalog (Phase 2: Localized Content)](#runtime-catalog-phase-2-localized-content)
   - [What this changes operationally](#what-this-changes-operationally)
   - [Required locale keys in catalog](#required-locale-keys-in-catalog)
@@ -100,12 +101,21 @@ Detailed phase plan: `docs/phase1-runtime-catalog-plan.md`.
 
 ### Validation
 - Command: `npm run catalog:validate`
+- Script: `scripts/validate-catalog.mjs` (optional path arg; defaults to `apps/web/public/catalog/order-config.json`)
 - Checks include:
   - schema shape (`locations`, `menu`, `pricing`)
   - duplicate IDs/tokens/manual codes
   - broken category/group references
   - invalid prices/bounds
   - malformed image URLs
+
+### Fallback Sync
+- Command: `npm run catalog:sync`
+- Script: `scripts/sync-catalog-fallback.mjs`
+- Behavior:
+  - Reads runtime catalog from `apps/web/public/catalog/order-config.json`
+  - Validates JSON parseability and rewrites formatted fallback JSON to `apps/web/src/config/order-config.json`
+  - Accepts optional source/target path args for custom sync flows
 
 ## Runtime Catalog (Phase 2: Localized Content)
 Menu content now supports multilingual fields inside the catalog itself.
