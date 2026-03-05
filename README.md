@@ -24,6 +24,9 @@ Last updated: 2026-03-05
 - [Notes](#notes)
 <!-- TOC end -->
 
+[![Lint](https://github.com/RaphaelGuerra/ez-order/actions/workflows/lint.yml/badge.svg)](https://github.com/RaphaelGuerra/ez-order/actions/workflows/lint.yml)
+[![Security](https://github.com/RaphaelGuerra/ez-order/actions/workflows/security.yml/badge.svg)](https://github.com/RaphaelGuerra/ez-order/actions/workflows/security.yml)
+
 Mobile-first QR ordering flow where the waiter is alerted via Pushover push notifications.
 
 ## How It Works
