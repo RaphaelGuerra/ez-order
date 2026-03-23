@@ -1,6 +1,6 @@
 # EZ-Order (Push Notification Mode)
 
-Last updated: 2026-03-18
+Last updated: 2026-03-23
 
 ## Table of Contents
 
